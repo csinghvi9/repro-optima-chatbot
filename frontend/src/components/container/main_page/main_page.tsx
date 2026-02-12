@@ -5,8 +5,45 @@ import axios from "axios";
 import Chatbot from "@/components/container/home_page/bot_ui";
 import { useWebSocket } from "@/app/WebSocketContext";
 import useThreads from "@/components/threads/threads.hook";
-import Typing from "@/components/ui/typing";
 import { motion, AnimatePresence } from "framer-motion";
+
+const ChatIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    className="w-7 h-7"
+  >
+    <path
+      d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"
+      fill="white"
+      stroke="white"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="9" cy="11.5" r="1" fill="#CE3149" />
+    <circle cx="12.5" cy="11.5" r="1" fill="#CE3149" />
+    <circle cx="16" cy="11.5" r="1" fill="#CE3149" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    className="w-6 h-6"
+  >
+    <path
+      d="M18 6L6 18M6 6l12 12"
+      stroke="white"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 const ChatbotWidget: React.FC = () => {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -41,47 +78,6 @@ const ChatbotWidget: React.FC = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchGuestToken = async () => {
-  //     try {
-  //       const token = sessionStorage.getItem("guest_token");
-
-  //       if (!token || isTokenExpired(token)) {
-  //         const response = await axios.get<{
-  //           token?: { access_token?: string };
-  //         }>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/guest_token`);
-
-  //         const access_token = response.data?.token?.access_token;
-
-  //         if (access_token) {
-  //           sessionStorage.setItem("guest_token", access_token);
-  //           const token = sessionStorage.getItem("guest_token");
-  //           if (token) {
-  //             setUpWebSocket(token);
-  //             const newThread = await createNewThread("English");
-  //             setThreadID(newThread._id);
-  //           } else {
-  //             console.error("❌ No token found in session storage");
-  //           }
-  //         }
-  //       } else {
-  //         if (token) {
-  //           setUpWebSocket(token);
-  //           const newThread = await createNewThread("English");
-  //           setThreadID(newThread._id);
-  //         } else {
-  //           console.error("❌ No token found in session storage");
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching guest token:", error);
-  //     }
-  //   };
-
-  //   if (isChatbotOpen) {
-  //     fetchGuestToken();
-  //   }
-  // }, [isChatbotOpen]);
   useEffect(() => {
     const fetchGuestToken = async () => {
       try {
@@ -124,7 +120,7 @@ const ChatbotWidget: React.FC = () => {
 
       const token = sessionStorage.getItem("guest_token");
 
-      // ✅ token dead => close bot & reset
+      // token dead => close bot & reset
       if (!token || isTokenExpired(token)) {
         disconnectWebSocket();
         sessionStorage.removeItem("guest_token");
@@ -134,7 +130,7 @@ const ChatbotWidget: React.FC = () => {
         return;
       }
 
-      // ✅ token ok => reconnect
+      // token ok => reconnect
       setUpWebSocket(token);
     };
 
@@ -148,15 +144,18 @@ const ChatbotWidget: React.FC = () => {
 
   return (
     <>
-      {/* Chatbot UI Popup */}
+      {/* Chatbot Widget Popup */}
       <AnimatePresence>
         {newThreadID && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 400, opacity: 1 }} // adjust height as per your chatbot
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="fixed bottom-6 right-6 z-50 overflow-hidden rounded-lg shadow-lg bg-white"
+            initial={{ scale: 0.5, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.5, opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed bottom-[88px] right-4 md:right-6 z-50 overflow-hidden rounded-2xl shadow-2xl
+              w-[calc(100vw-32px)] h-[calc(100vh-100px)]
+              md:w-[400px] md:h-[600px]
+              max-md:bottom-0 max-md:right-0 max-md:w-full max-md:h-full max-md:rounded-none"
           >
             <Chatbot
               newThreadID={newThreadID}
@@ -167,15 +166,8 @@ const ChatbotWidget: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* {isLoadingChatbot && (
-        <div className="fixed bottom-21 right-4 bg-white p-4 rounded flex flex-row shadow text-indira_text bg-gradient-to-r from-indra_yellow to-indira_blue">
-          <span className="pt-3">Connecting</span>
-          <Typing />
-        </div>
-      )} */}
-
-      {/* Chatbot Button Container */}
-      <div className="fixed bottom-0 right-4 md:right-12 z-10 w-[60px] h-[60px]">
+      {/* Chatbot Toggle Button — hidden on mobile when chat is open (header has its own close button) */}
+      <div className={`fixed bottom-4 right-4 md:right-6 z-50 ${newThreadID ? "max-md:hidden" : ""}`}>
         <AnimatePresence>
           {showTooltip && (
             <motion.div
@@ -184,46 +176,23 @@ const ChatbotWidget: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 6 }}
               transition={{ duration: 0.25 }}
-              className="absolute -top-10 md:-top-10 right-0 flex flex-col items-end pointer-events-none"
+              className="absolute -top-10 right-0 flex flex-col items-end pointer-events-none"
             >
-              <div className="px-3 py-2 rounded-lg  text-indira_text text-xs font-indira_font whitespace-nowrap border border-indira_border bg-indira_hello_border">
+              <div className="px-3 py-1.5 rounded-lg text-indira_text text-xs font-indira_font whitespace-nowrap border border-indira_border bg-white shadow-sm">
                 Chat with us!
               </div>
-              <div className="mr-4 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-indira_border" />
+              <div className="mr-5 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-white" />
             </motion.div>
           )}
         </AnimatePresence>
-        {!newThreadID ? (
-          <button
-            onClick={toggleChatbot}
-            className="w-full h-full cursor-pointer"
-          >
-            <img
-              src="/bot_website_icon.png"
-              alt="bot"
-              className="w-full h-full object-cover rounded-full"
-            />
-          </button>
-        ) : (
-          <button
-            onClick={toggleChatbot}
-            className="w-full h-full cursor-pointer hidden md:inline-block"
-          >
-            <div
-              className="w-full h-full rounded-[60px] bg-[#FAEAED] flex items-center justify-center "
-              style={{
-                border: "3px solid transparent",
-                borderRadius: "60px",
-                backgroundOrigin: "border-box",
-                backgroundClip: "padding-box, border-box",
-                backgroundImage:
-                  "linear-gradient(#FAEAED, #FAEAED), linear-gradient(178.04deg, #CA5D62 1.65%, #F8CFD1 95.71%)",
-              }}
-            >
-              <img src="./dropdown_arrow.svg" />
-            </div>
-          </button>
-        )}
+        <motion.button
+          onClick={toggleChatbot}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-14 h-14 rounded-full cursor-pointer flex items-center justify-center shadow-lg bg-gradient-to-br from-indira_light_red to-indira_dark_red hover:from-indira_hover_red hover:to-indira_hover_red transition-colors"
+        >
+          {newThreadID ? <CloseIcon /> : <ChatIcon />}
+        </motion.button>
       </div>
     </>
   );

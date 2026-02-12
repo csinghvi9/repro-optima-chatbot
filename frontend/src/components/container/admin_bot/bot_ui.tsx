@@ -19,6 +19,17 @@ import LanguageSelection from "@/components/ui/languageSelection";
 import LanguageChange from "@/components/ui/languageChange";
 import FAQ from "@/components/ui/faqResponse";
 
+const BotAvatar = () => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[22px] h-[22px]">
+    <rect x="3" y="8" width="18" height="13" rx="5" fill="#CE3149"/>
+    <circle cx="9" cy="14" r="1.5" fill="white"/>
+    <circle cx="15" cy="14" r="1.5" fill="white"/>
+    <path d="M10 17.5C11 18.8 13 18.8 14 17.5" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+    <line x1="12" y1="8" x2="12" y2="5" stroke="#CE3149" strokeWidth="2" strokeLinecap="round"/>
+    <circle cx="12" cy="3.5" r="1.8" fill="#CE3149"/>
+  </svg>
+);
+
 type Message = {
   role: "bot" | "user";
   content: any;
@@ -67,11 +78,7 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
             <HelloMessage />
             <div className="flex items-end gap-2 max-w-[70%]">
               <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                <img
-                  src="/bot_side_icon.png"
-                  alt="bot"
-                  className="w-[26px] h-[30px]"
-                />
+                <BotAvatar />
               </div>
               <LanguageSelection
                 onSelect={handleLanguageSelect}
@@ -100,11 +107,7 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
                     <div className="flex items-end gap-2 max-w-[95%]">
                       {/* Bot icon */}
                       <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                        <img
-                          src="/bot_side_icon.png"
-                          alt="bot"
-                          className="w-[26px] h-[30px]"
-                        />
+                        <BotAvatar />
                       </div>
                       <AddOnServiceBox msg={msg.content} />
                     </div>
@@ -112,11 +115,7 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
                     <div className="flex items-end gap-2 max-w-[95%]">
                       {/* Bot icon */}
                       <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                        <img
-                          src="/bot_side_icon.png"
-                          alt="bot"
-                          className="w-[26px] h-[30px]"
-                        />
+                        <BotAvatar />
                       </div>
                       <AppointmentBookedMessage msg={msg} />
                     </div>
@@ -124,11 +123,7 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
                     <div className="flex items-end gap-2 max-w-[95%]">
                       {/* Bot icon */}
                       <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                        <img
-                          src="/bot_side_icon.png"
-                          alt="bot"
-                          className="w-[26px] h-[30px]"
-                        />
+                        <BotAvatar />
                       </div>
                       <FAQ msg={msg.content} />
                     </div>
@@ -140,11 +135,7 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
                         messages[idx + 1].contentType === "video_url" &&
                         messages[idx].role === "bot") ? (
                         <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                          <img
-                            src="/bot_side_icon.png"
-                            alt="bot"
-                            className="w-[26px] h-[30px]"
-                          />
+                          <BotAvatar />
                         </div>
                       ) : (
                         <div className="w-8 h-8" /> // Empty placeholder for alignment

@@ -37,6 +37,17 @@ import ServicesOffered from "@/components/container/servicesOffered/servicesOffe
 import FrequentlyAskedQuestion from "@/components/container/frequentlyAskedQuestion/frequentlyAskedQuestion";
 import FAQ from "@/components/ui/faqResponse";
 
+const BotAvatar = () => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[22px] h-[22px]">
+    <rect x="3" y="8" width="18" height="13" rx="5" fill="#CE3149"/>
+    <circle cx="9" cy="14" r="1.5" fill="white"/>
+    <circle cx="15" cy="14" r="1.5" fill="white"/>
+    <path d="M10 17.5C11 18.8 13 18.8 14 17.5" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+    <line x1="12" y1="8" x2="12" y2="5" stroke="#CE3149" strokeWidth="2" strokeLinecap="round"/>
+    <circle cx="12" cy="3.5" r="1.8" fill="#CE3149"/>
+  </svg>
+);
+
 type ChatbotProps = {
   newThreadID: string; // or number | null | undefined (your actual type)
   setThreadID: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -209,7 +220,7 @@ export default function Chatbot({
       toggleChatbot={toggleChatbot}
     >
       <div
-        className={`flex flex-col flex-1 overflow-y-auto space-y-4 no-scrollbar h-full md:h-[420px] lg:h-[420px] 
+        className={`flex flex-col flex-1 overflow-y-auto space-y-4 no-scrollbar h-full
     ${messages.length <= 1 ? "justify-end" : "justify-start"}`}
       >
         <HelloMessage />
@@ -237,11 +248,7 @@ export default function Chatbot({
                 <div className="flex items-end gap-2 max-w-[95%]">
                   {/* Bot icon */}
                   <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                    <img
-                      src="/bot_side_icon.png"
-                      alt="bot"
-                      className="w-[26px] h-[30px]"
-                    />
+                    <BotAvatar />
                   </div>
                   <AddOnServiceBox msg={msg.content} />
                 </div>
@@ -249,11 +256,7 @@ export default function Chatbot({
                 <div className="flex items-end gap-2 max-w-[95%]">
                   {/* Bot icon */}
                   <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                    <img
-                      src="/bot_side_icon.png"
-                      alt="bot"
-                      className="w-[26px] h-[30px]"
-                    />
+                    <BotAvatar />
                   </div>
                   <AppointmentBookedMessage msg={msg} />
                 </div>
@@ -261,11 +264,7 @@ export default function Chatbot({
                 <div className="flex items-end gap-2 max-w-[95%]">
                   {/* Bot icon */}
                   <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                    <img
-                      src="/bot_side_icon.png"
-                      alt="bot"
-                      className="w-[26px] h-[30px]"
-                    />
+                    <BotAvatar />
                   </div>
                   <FAQ msg={msg.content} />
                 </div>
@@ -273,11 +272,7 @@ export default function Chatbot({
                 <div className="flex items-end gap-2 max-w-[80%]">
                   {/* Bot icon */}
                   {/* <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                    <img
-                      src="/bot_side_icon.png"
-                      alt="bot"
-                      className="w-[26px] h-[30px]"
-                    />
+                    <BotAvatar />
                   </div> */}
                   {!messages[idx + 1] ||
                   messages[idx + 1].type !== "bot" ||
@@ -285,11 +280,7 @@ export default function Chatbot({
                     messages[idx + 1].contentType === "video_url" &&
                     messages[idx].type === "bot") ? (
                     <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                      <img
-                        src="/bot_side_icon.png"
-                        alt="bot"
-                        className="w-[26px] h-[30px]"
-                      />
+                      <BotAvatar />
                     </div>
                   ) : (
                     <div className="w-8 h-8" /> // Empty placeholder for alignment
@@ -472,11 +463,7 @@ export default function Chatbot({
         {typing && (
           <div className="flex items-start gap-2 justify-start">
             <div className="w-[32px] h-[32px] rounded-full bg-white flex items-center justify-center mt-[5px]">
-              <img
-                src="/bot_side_icon.png"
-                alt="bot icon"
-                className="w-[26px] h-[30px]"
-              />
+              <BotAvatar />
             </div>
             <Typing />
           </div>

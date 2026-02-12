@@ -584,15 +584,13 @@ export default function BotStructureNew({
 
   return (
     <div className="primary-gradient flex flex-row">
-      <div className="flex items-center justify-between shadow-[0px_4px_14px_0px_#0000000D]  bg-white md:rounded-t-[12px] px-4 py-3">
-          {isMobile && (
-            <div
-              onClick={() => toggleChatbot()}
-              className="bg-indira_language_circle rounded-full flex items-center justify-center cursor-pointer p-2"
-            >
-              <IoMdClose className="w-4 h-4 text-black" />
-            </div>
-          )}
+      <div className="flex items-center justify-between shadow-[0px_4px_14px_0px_#0000000D] bg-white md:rounded-t-[12px] px-4 py-3">
+          <div
+            onClick={() => toggleChatbot()}
+            className="bg-indira_language_circle rounded-full flex items-center justify-center cursor-pointer p-2"
+          >
+            <IoMdClose className="w-4 h-4 text-black" />
+          </div>
           <p className="text-base font-semibold font-indira_font text-indira_text">
             Chat with us
           </p>
