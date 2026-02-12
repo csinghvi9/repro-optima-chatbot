@@ -19,16 +19,7 @@ const LanguageChange: React.FC<LanguageChangeProps> = ({ onSelect, selectedLang,
     const { changeLanguage } = useThreads();
       const languages: string[] = [
     "English",
-    "हिन्दी",
-    "मराठी",
-    "ગુજરાતી",
-    "ಕನ್ನಡ",
-    "বাংলা",
-    "தமிழ்",
-    "ਪੰਜਾਬੀ",
-    "অসমীয়া",
-    "ଓଡ଼ିଆ",
-    "తెలుగు"
+    "Русский",
   ];
     const handleSend = (formatted: string) => {
         if (formatted.trim()) {

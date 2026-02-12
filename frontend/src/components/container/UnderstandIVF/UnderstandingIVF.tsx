@@ -32,16 +32,7 @@ const UnderstandingIVF: React.FC<UnderstandingIVFProps> = ({
 
     const messagesByLanguage: Record<string, string> = {
         English: "What is IVF?",
-        हिन्दी: "IVF क्या है?",
-        मराठी: "IVF म्हणजे काय?",
-        ગુજરાતી: "IVF શું છે?",
-        ಕನ್ನಡ: "IVF ಎಂದರೆ ಏನು?",
-        தமிழ்: "IVF என்பது என்ன?",
-        తెలుగు: "IVF అంటే ఏమిటి?",
-        বাংলা: "IVF কী?",
-        ਪੰਜਾਬੀ: "IVF ਕੀ ਹੈ?",
-        অসমীয়া: "IVF কি?",
-        ଓଡ଼ିଆ: "IVF କଣ?"
+        Русский: "Что такое ЭКО?",
     };
 
 

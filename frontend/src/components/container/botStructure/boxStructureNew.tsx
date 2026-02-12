@@ -281,17 +281,8 @@ export default function BotStructureNew({
     };
   }, [ws]);
   const langCodeMap: Record<string, string> = {
-    English: "en-IN", // English (India)
-    हिन्दी: "hi-IN", // Hindi
-    मराठी: "mr-IN", // Marathi
-    ગુજરાતી: "gu-IN", // Gujarati
-    ಕನ್ನಡ: "kn-IN", // Kannada
-    বাংলা: "bn-IN", // Bengali
-    தமிழ்: "ta-IN", // Tamil
-    ਪੰਜਾਬੀ: "pa-IN", // Punjabi
-    অসমীয়া: "as-IN", // Assamese
-    తెలుగు: "te-IN", // Telugu
-    ଓଡ଼ିଆ: "or-IN", // Odia
+    English: "en-US", // English
+    Русский: "ru-RU", // Russian
   };
   const handleMicClick = async () => {
     if (micStatus !== "listening") {
@@ -616,16 +607,7 @@ export default function BotStructureNew({
               <div className="flex flex-wrap gap-2 p-2">
                 {[
                   "English",
-                  "हिन्दी",
-                  "मराठी",
-                  "ગુજરાતી",
-                  "ಕನ್ನಡ",
-                  "বাংলা",
-                  "தமிழ்",
-                  "ਪੰਜਾਬੀ",
-                  "অসমীয়া",
-                  "ଓଡ଼ିଆ",
-                  "తెలుగు",
+                  "Русский",
                 ].map((lang, index) => (
                   <div
                     key={index}
