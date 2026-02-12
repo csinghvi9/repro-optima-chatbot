@@ -30,7 +30,7 @@ async def AddONServices(
             "1": {
                 "step_id": "1",
                 "message": ["To share details about the Test, please share your name"],
-                "expected_input": "The user wants to know services or different medical test information provided by the indira ivf.",
+                "expected_input": "The user wants to know services or different medical test information provided by the ivf.",
                 "valid_condition": "",
                 "action": None,
                 "other_text": [
@@ -835,7 +835,7 @@ async def AddONServices(
             else:
                 allowed_add_on_services.insert(
                     0,
-                    "Indira IVF offer a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:",
+                    "IVF offer a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:",
                 )
                 prompt = f"then return all the test and also  the heading specified in this list  {allowed_add_on_services} translate in this langauge-{language} and separate each test and heading with ending \n  output-string "
                 llm_answer = await ask_openai_validation_assistant(prompt)

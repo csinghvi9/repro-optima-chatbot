@@ -35,6 +35,12 @@ RUN npm install
 # Copy project files (src, public, configs, etc.)
 COPY . .
 
+# Allow overriding API URLs at build time (falls back to .env values if not set)
+ARG NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_WEBSOCKET_URL
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+ENV NEXT_PUBLIC_WEBSOCKET_URL=${NEXT_PUBLIC_WEBSOCKET_URL}
+
 # Build Next.js app
 RUN npm run build
 

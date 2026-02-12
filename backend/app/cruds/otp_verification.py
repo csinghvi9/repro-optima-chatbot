@@ -137,7 +137,7 @@ async def verify_otp_entry(data, thread_id: str = None):
 async def send_indira_otp(contact_no: str, otp_code: str):
     try:
         # Construct the message with the OTP code
-        message = f"Your OTP from Indira IVF is: {otp_code}"
+        message = f"Your OTP from IVF is: {otp_code}"
 
         # Build the URL with query parameters
         url = (

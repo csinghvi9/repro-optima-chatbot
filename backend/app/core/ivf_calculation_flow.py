@@ -10,7 +10,7 @@ async def ivf_success_calculation_flow(language: str, thread_id):
     thread = await Thread.find_one(Thread.id == ObjectId(thread_id))
     # Explicitly keep messages as a list of separate strings
     messages = [
-        "We have devised an Pregnancy Calculator which gives success rate based on historical data of Indira IVF.",
+        "We have devised an Pregnancy Calculator which gives success rate based on historical data of IVF.",
         "This is how our Pregnancy Calculator works.\n1 Share details and reports\n2 We analyze key fertility factors\n3 Know success rate for each cycle",
     ]
 

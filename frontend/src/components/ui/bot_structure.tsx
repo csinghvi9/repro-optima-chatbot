@@ -16,7 +16,7 @@ export default function BotStructure({
 <div className="w-full h-full flex flex-col bg-gradient-to-r from-[#fafee9] to-[#ecfbfc]">
       <div className="flex items-center justify-between shadow-[0px_4px_14px_0px_#0000000D]  bg-white md:rounded-t-[12px] px-4 py-3">
         <p className="text-base font-semibold font-indira_font text-indira_text">
-          Chat with Indira Bot
+          Chat with IVF Bot
         </p>
          <div className="">
           <button

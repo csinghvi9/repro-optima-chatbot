@@ -16,8 +16,8 @@ const quicksand = Quicksand({
 });
 
 export const metadata: Metadata = {
-  title: "Indira Bot",
-  description: "Indira Bot – your smart assistant for seamless IVF guidance, support, and care.",
+  title: "IVF Bot",
+  description: "IVF Bot – your smart assistant for seamless IVF guidance, support, and care.",
   icons: {
     icon: "/favicon.ico",
   },
@@ -36,7 +36,7 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"     
         />
-        <title>Indira Bot</title>
+        <title>IVF Bot</title>
         <link rel="icon" href="/bot_logo.ico" />
       </head>
       <body>

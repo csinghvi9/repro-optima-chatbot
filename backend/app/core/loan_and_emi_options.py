@@ -70,7 +70,7 @@ async def loan_emi_option(user_message, language: str, thread_id: str):
 
     # Explicitly keep messages as a list of separate strings
     messages = [
-        "At Indira IVF, we offer 0% interest EMI and loan facilities for IVF treatment. If you are eligible, you can avail of these options to ease the financial burden.",
+        "At IVF, we offer 0% interest EMI and loan facilities for IVF treatment. If you are eligible, you can avail of these options to ease the financial burden.",
         "We suggest you first visit the center for a consultation. The doctor will explain the treatment process and give you an estimate of the total cost. After that, you can speak to our loan department, and they will guide you through the entire loan process and provide all necessary details.",
         "To check your eligibility or know more simply click on button given below",
         {"content": "Bringing your parenthood dream closer"},

@@ -29,7 +29,7 @@ async def FindHospital(
                     "To share the IVF Centers details, I’ll need a few quick details from you",
                     "Please share your pincode or city name",
                 ],
-                "expected_input": "user wants to find nearby ivf or indira ivf centers",
+                "expected_input": "user wants to find nearby ivf centers",
                 "valid_condition": "",
                 "action": None,
                 "other_text": "",
@@ -75,7 +75,7 @@ async def FindHospital(
         step_id = thread.step_id
     elif not step_id:
         step_id = "1"
-        user_message = "Find Indira IVF Centers near me?"
+        user_message = "Find IVF Centers near me?"
 
     step = find_hospital_flow["steps"].get(step_id)
     if not step:

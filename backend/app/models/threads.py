@@ -44,7 +44,7 @@ class Thread(Document):
                 "cache": {
                     "city": "Delhi",
                     "intent": "lead_generation",
-                    "preferred_center": "Indira IVF Delhi",
+                    "preferred_center": "IVF Delhi",
                     "need_type": "IVF",
                     "faq_count": 0,
                     "center_lookup_count": 1,

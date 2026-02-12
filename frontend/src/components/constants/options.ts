@@ -1,12 +1,12 @@
 export  const options = [
-    "Pregnancy Calculator",
+    //"Pregnancy Calculator",
     "Book Free Consultation",
     "Find Hospital",
     "FAQ's",
     //"Emotional Support",
-    "EMI facilities",
+    //"EMI facilities",
     "Success Rate",
     "Understanding IVF",
     "Services Offered",
-    "IVF Packages",
+    //"IVF Packages",
   ];

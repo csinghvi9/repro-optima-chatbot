@@ -2,7 +2,7 @@ export default function Head() {
   return (
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      <title>Indira Bot</title>
+      <title>IVF Bot</title>
       <link rel="icon" href="/bot_logo.ico" />
     </>
   );

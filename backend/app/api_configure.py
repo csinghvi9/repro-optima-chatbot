@@ -14,7 +14,9 @@ def configure_app(app: FastAPI):
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[
-            "https://uatiivfchatbot.indiraivf.com"
+            "https://uatiivfchatbot.indiraivf.com",
+            "http://localhost:3000",
+            "http://localhost",
         ],
         allow_credentials=True,
         allow_methods=["*"],

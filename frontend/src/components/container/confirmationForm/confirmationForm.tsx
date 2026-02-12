@@ -189,7 +189,7 @@ export default function ConfirmationForm({
         <div className="mt-6 flex flex-col items-center gap-4 text-center px-4 overflow-y-auto">
           <p className=" text-[16px] font-normal font-indira_font text-[#0D0D0D]">
             The Pregnancy calculator does not provide medical advice , diagnosis
-            or treatment. The report is based on the historical data of Indira
+            or treatment. The report is based on the historical data of
             IVF ,Clinical studies and literature sources and may not reflect
             your actual chances of success during ART treatment. The report can
             be referred only for informational purposes. The reported values are

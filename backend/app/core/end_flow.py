@@ -11,7 +11,7 @@ async def end_flow(thread_id: str, language: str, flow_change: bool = True):
     thread_obj_id = ObjectId(thread_id)
     thread = await Thread.find_one(Thread.id == thread_obj_id)
     if flow_change:
-        messages = "I do not understand your query, but I can only help with topics related to fertility, IVF, and Indira IVF services"
+        messages = "I do not understand your query, but I can only help with topics related to fertility, IVF, and IVF services"
     else:
         messages = [
             "Sorry, I am unable to help you with this query currently. Please let me know if there's anything related to IVF which I can help you with.",

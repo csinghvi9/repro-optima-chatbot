@@ -80,7 +80,7 @@ async def ivfPackages(
                 "step_id": "5",
                 "message": [
                     "Thank you for sharing your details",
-                    "At Indira IVF, the cost of IVF/ICSI treatment starts from ₹1,00,000* per cycle. It is advisable to consult with our fertility specialist for customized treatment plan.\n*IVF process, Injections, Egg Pickup, Embryo Transfer cost included. Cost of treatment depends on your test reports, type of treatment required, hormonal conditions etc. and may vary from couple to couple.",
+                    "At IVF, the cost of IVF/ICSI treatment starts from ₹1,00,000* per cycle. It is advisable to consult with our fertility specialist for customized treatment plan.\n*IVF process, Injections, Egg Pickup, Embryo Transfer cost included. Cost of treatment depends on your test reports, type of treatment required, hormonal conditions etc. and may vary from couple to couple.",
                     {
                         "title": "We offer 3 packages ",
                         "packages": [
