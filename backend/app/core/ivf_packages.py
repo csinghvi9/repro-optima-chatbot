@@ -6,9 +6,7 @@ from bson import ObjectId
 import json
 import re
 from app.core.existingUser import step_check
-from app.cruds.otp_verification import (
-    call_ivf_lead_creation_api,
-)
+
 import ast
 from app.core.format_check import validate_answer
 
@@ -157,14 +155,6 @@ async def ivfPackages(
             await user.save()
             next_step = step["next_step"]
             user = await User_Info.find_one(User_Info.thread_id == thread_id)
-            if not user.crm_api_send:
-                result = await call_ivf_lead_creation_api(
-                    full_name=user.name,
-                    contact_no=user.phone_number,
-                    pincode=user.pincode,
-                )
-                user.crm_api_send = True
-                await user.save()
             if thread:
                 thread.flow_id = flow_id
                 thread.step_id = next_step

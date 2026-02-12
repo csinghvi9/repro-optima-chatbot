@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useWebSocket } from "@/app/WebSocketContext";
 
 interface Center {
   "Clinic Name": string;
   Distance_km: number | string;
   [key: string]: any; // in case extra fields come
-}
-declare global {
-  interface Window {
-    google: any;
-  }
 }
 interface Message {
   type: "bot" | "user";
@@ -32,99 +27,6 @@ const CentersList: React.FC<CentersListProps> = ({
   setTyping,
   messages,
 }) => {
-  // const [showMapModal, setShowMapModal] = useState(false);
-  // const [userCoords, setUserCoords] = useState<{
-  //   lat: number;
-  //   lng: number;
-  // } | null>(null);
-  // const [centerCoords, setCenterCoords] = useState<{
-  //   lat: number;
-  //   lng: number;
-  // } | null>(null);
-  // const [selectedCenter, setSelectedCenter] = useState<Center | null>(null);
-
-  // 🗺️ Initialize map when modal opens
-  // useEffect(() => {
-  //   if (showMapModal && window.google && selectedCenter) {
-  //     const geocoder = new window.google.maps.Geocoder();
-  //     const fallbackCoords = { lat: 28.6139, lng: 77.209 }; // New Delhi fallback
-
-  //     // Get user's location
-  //     navigator.geolocation.getCurrentPosition(
-  //       (pos) => {
-  //         const coords = {
-  //           lat: pos.coords.latitude,
-  //           lng: pos.coords.longitude,
-  //         };
-  //         setUserCoords(coords);
-  //         initMap(coords);
-  //       },
-  //       (error) => {
-  //         console.warn("Geolocation failed, using fallback:", error);
-  //         setUserCoords(fallbackCoords);
-  //         initMap(fallbackCoords);
-  //       }
-  //     );
-
-  //     // Initialize map
-  //     const initMap = (userLocation: { lat: number; lng: number }) => {
-  //       geocoder.geocode(
-  //         { address: selectedCenter.Address },
-  //         (results: any, status: string) => {
-  //           let clinicCoords = fallbackCoords;
-
-  //           if (status === "OK" && results[0]) {
-  //             clinicCoords = {
-  //               lat: results[0].geometry.location.lat(),
-  //               lng: results[0].geometry.location.lng(),
-  //             };
-  //             setCenterCoords(clinicCoords);
-  //           }
-
-  //           const map = new window.google.maps.Map(
-  //             document.getElementById("map") as HTMLElement,
-  //             {
-  //               center: clinicCoords,
-  //               zoom: 11,
-  //             }
-  //           );
-
-  //           // 🧍 User Marker
-  //           new window.google.maps.Marker({
-  //             position: userLocation,
-  //             map,
-  //             label: { text: "You", color: "white" },
-  //             icon: {
-  //               path: window.google.maps.SymbolPath.CIRCLE,
-  //               scale: 6,
-  //               fillColor: "#007AFF",
-  //               fillOpacity: 1,
-  //               strokeWeight: 1,
-  //               strokeColor: "#fff",
-  //             },
-  //           });
-
-  //           // 🏥 Clinic Marker
-  //           new window.google.maps.Marker({
-  //             position: clinicCoords,
-  //             map,
-  //             label: { text: "Clinic", color: "white" },
-  //             icon: {
-  //               url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
-  //             },
-  //           });
-
-  //           // Adjust map to show both markers
-  //           const bounds = new window.google.maps.LatLngBounds();
-  //           bounds.extend(userLocation);
-  //           bounds.extend(clinicCoords);
-  //           map.fitBounds(bounds);
-  //         }
-  //       );
-  //     };
-  //   }
-  // }, [showMapModal, selectedCenter]);
-  const [mapsUrl, setMapsUrl] = useState("");
 
   if (!centers || centers.length === 0) {
     return (
@@ -156,34 +58,19 @@ const CentersList: React.FC<CentersListProps> = ({
     }
   };
 
-  const handleOpenMapDirection = (centerName: string) => {
-    const destination = encodeURIComponent(centerName);
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${destination}`;
-          window.open(mapsUrl, "_blank");
-        },
-        (error) => {
-          if (error.code === error.PERMISSION_DENIED) {
-            // open settings again if denied
-            window.open("chrome://settings/content/location", "_blank");
-          } else {
-            console.error("Geolocation error:", error.message);
-          }
-        }
-      );
+  const handleOpenMapDirection = (center: Center) => {
+    if (center.url) {
+      window.open(center.url, "_blank");
     } else {
-      alert("Your browser does not support location services.");
+      const destination = encodeURIComponent(center["Clinic Name"]);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${destination}`, "_blank");
     }
   };
 
   return (
     <div className="bg-white px-3 py-2 rounded-tl-[10px] rounded-tr-[10px] rounded-br-[10px] rounded-bl-[4px] text-xs max-w-[80%]">
       <p className="text-indira_text mb-2 text-xs">
-        Here are the nearby centers:
+        Here is our clinic location:
       </p>
 
       <ul className="space-y-2">
@@ -270,7 +157,7 @@ const CentersList: React.FC<CentersListProps> = ({
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleOpenMapDirection(center["Clinic Name"]);
+                            handleOpenMapDirection(center);
                           }}
                           className="w-[32px] h-[32px] rounded-full flex items-center justify-center bg-indira_user_message_bg cursor-pointer hover:opacity-90 transition"
                         >
@@ -289,27 +176,10 @@ const CentersList: React.FC<CentersListProps> = ({
       </ul>
 
       <p className="text-xs text-indira_text mt-2">
-        Click on the center’s name to view the complete address, or use the map
-        icon to view its location.
+        Click on the clinic name to proceed, or use the map icon to view the
+        location on Google Maps.
       </p>
 
-      {/* 🗺️ Map Modal */}
-      {/* {showMapModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-4 rounded-xl w-[90%] max-w-lg relative">
-            <button
-              className="absolute top-2 right-2 text-gray-500 text-sm cursor-pointer"
-              onClick={() => setShowMapModal(false)}
-            >
-              ✕
-            </button>
-            <h3 className="text-sm font-semibold mb-2 text-gray-800">
-              {selectedCenter?.["Clinic Name"]}
-            </h3>
-            <div id="map" className="w-full h-[400px] rounded-md"></div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };
