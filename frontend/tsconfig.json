@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/page.tsx", "src/components/ui/languageSelection.tsx", "src/components/container/botStructure/boxStructureNew.jsx", "src/components/container/ivfSuccessCalculator/ivfSuccessCalculator.jsx", "src/components/container/home_page/bot_ui.jsx", "src/components/container/home_page/bot_ui.jsx", "src/components/container/home_page/bot_ui.jsx", "src/components/container/admin_bot/bot_ui.tsx", "widget/index.js"],
+  "exclude": ["node_modules"]
+}

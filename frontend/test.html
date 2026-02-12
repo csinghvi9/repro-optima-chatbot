@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scrollable Chatbot Page</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      height: 200vh; /* Makes page scrollable */
+      overflow-y: scroll;
+      background: white;
+    }
+
+    header {
+      padding: 20px;
+      background: #4a90e2;
+      color: white;
+      text-align: center;
+    }
+
+    .content {
+      padding: 20px;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Scrollable Page with Chatbot Widget</h1>
+  </header>
+
+  <div class="content">
+    <p>
+      This page is intentionally long so you can scroll and verify that the chatbot widget
+      behaves correctly and stays fixed on the screen. Keep scrolling down to test.
+    </p>
+
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id risus luctus, 
+      tristique ex vitae, tempus ligula. Vivamus porta orci eu nunc varius, non dictum
+      felis cursus. Suspendisse potenti. Sed gravida euismod dui nec facilisis.
+    </p>
+
+    <p>
+      Scroll more... 👇👇👇  
+      Add as much content as needed to test scroll effect.
+    </p>
+  </div>
+
+  <!-- Chatbot Script -->
+  <script src="https://uatiivfchatbot.indiraivf.com//widget/chatbot.bundle.js"></script>
+
+  <script>
+    window.addEventListener("load", () => {
+      console.log("ChatbotWidget:", window.ChatbotWidget);
+
+      if (window.ChatbotWidget && typeof window.ChatbotWidget.init === "function") {
+        window.ChatbotWidget.init(); // Mounts widget
+      } else {
+        console.error("ChatbotWidget.init() not found!");
+      }
+    });
+  </script>
+
+</body>
+</html>

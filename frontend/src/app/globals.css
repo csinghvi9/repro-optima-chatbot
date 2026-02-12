@@ -1,0 +1,200 @@
+@import "tailwindcss";
+/* @config '../../tailwind.config.js'; */
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+
+html,
+body {
+  touch-action: manipulation;
+  background: transparent !important;
+  color: var(--foreground);
+  font-family: 'Open Sans', 'Quicksand';
+}
+
+@theme {
+  --color-indra_yellow: #fafee9;
+  --color-indira_blue: #ecfbfc;
+  --color-indira_hover_red: #A5273A;
+  --color-indira_light_red: #F04F5F;
+  --color-indira_dark_red: #CE3149;
+  --color-indira_border: #D9D9D9;
+  --color-indira_hello_border: #F2F2F2;
+  --color-indira_text: #0D0D0D;
+  --color-indira_hover_text: #717272;
+  --color-indira_input_label_text: #B2B3B3;
+  --color-indira_user_message_bg: #F6EBFF;
+  --color-indira_divider: #E5E6E6;
+  --color-indira_language_circle: #F5EFFD;
+  --color-indira_language_background: #FAEAED;
+  --color-indira_bot_message: #FFFFFF;
+
+  --font-indira_font: 'Open Sans';
+  --font-indira_second_font: 'Quicksand';
+  --gradient-indira: linear-gradient(to right, var(--color-indra_yellow), var(--color-indira_blue));
+
+
+}
+
+
+
+.customScrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.customScrollbar::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.customScrollbar::-webkit-scrollbar-thumb {
+  background-color: #E5E6E6;
+  border-radius: 10px;
+  background-clip: content-box;
+}
+
+.horizontalcustomScrollbar::-webkit-scrollbar {
+  height:4px;
+}
+
+.horizontalcustomScrollbar::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.horizontalcustomScrollbar::-webkit-scrollbar-thumb {
+  background-color: #E5E6E6;
+  border-radius: 10px;
+  background-clip: content-box;
+}
+
+
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+
+
+  .primary-gradient {
+    position: fixed;
+    z-index: 50;
+    background: linear-gradient(to right, #fafee9, #ecfbfc);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+    /* Tailwind's gray-300 */
+    width: 100%;
+    height: 86%;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  [data-disabled="true"] {
+    color: #9ca3af;
+    /* Tailwind gray-400 */
+  }
+
+  [data-disabled="false"] button:hover {
+    background-color: black;
+    /* black circle */
+    color: white;
+    /* text becomes white */
+    border-radius: 9999px;
+    /* fully round circle */
+  }
+
+
+
+  @keyframes equalizer {
+
+    0%,
+    100% {
+      transform: scaleY(0.3);
+    }
+
+    50% {
+      transform: scaleY(1);
+    }
+  }
+
+  .animate-bar1,
+  .animate-bar2,
+  .animate-bar3,
+  .animate-bar4,
+  .animate-bar5 {
+    transform-origin: bottom;
+    /* grow upward */
+    display: inline-block;
+  }
+
+  .animate-bar1 {
+    animation: equalizer 1s infinite ease-in-out 0s;
+  }
+
+  .animate-bar2 {
+    animation: equalizer 1s infinite ease-in-out 0.2s;
+  }
+
+  .animate-bar3 {
+    animation: equalizer 1s infinite ease-in-out 0.4s;
+  }
+
+  .animate-bar4 {
+    animation: equalizer 1s infinite ease-in-out 0.6s;
+  }
+
+  .animate-bar5 {
+    animation: equalizer 1s infinite ease-in-out 0.8s;
+  }
+
+
+  /* Responsive adjustments for md screens (min-width: 768px) */
+
+  @media (max-width: 768px) {
+    .primary-gradient {
+      height: 100%;
+
+    }
+  }
+/* 
+  @media (min-width: 768px) and (max-height: 650px) {
+    .primary-gradient {
+      height: 80%;
+      width:100%;
+    }
+  }
+
+@media (min-width: 1440px) and (max-height:900px) {
+  .primary-gradient {
+    height: 80%;
+    border-radius: 12px;
+    
+  }
+}
+@media (min-width: 2560px) {
+  .primary-gradient {
+    height: 80%;
+    border-radius: 12px;
+    
+  }
+} */
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+}
