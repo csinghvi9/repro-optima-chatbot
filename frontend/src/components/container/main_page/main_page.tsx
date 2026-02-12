@@ -143,7 +143,10 @@ const ChatbotWidget: React.FC = () => {
   const showTooltip = !isChatbotOpen && !isLoadingChatbot;
 
   return (
-    <>
+    <div
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/repro.png')" }}
+    >
       {/* Chatbot Widget Popup */}
       <AnimatePresence>
         {newThreadID && (
@@ -194,7 +197,7 @@ const ChatbotWidget: React.FC = () => {
           {newThreadID ? <CloseIcon /> : <ChatIcon />}
         </motion.button>
       </div>
-    </>
+    </div>
   );
 };
 
