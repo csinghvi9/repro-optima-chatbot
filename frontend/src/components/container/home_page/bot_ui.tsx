@@ -31,9 +31,7 @@ import IVFQuestionBox from "@/components/ui/ivfQuestion";
 import AddOnServiceBox from "@/components/ui/addServiceBox";
 import FeedbackBox from "@/components/ui/feedbackBox";
 import MessageVideoCarousels from "@/components/ui/videoMessage";
-import ResendOTP from "@/components/container/resendOTP/resendOTP";
 import LanguageChange from "@/components/ui/languageChange";
-import ChangePhoneNumber from "@/components/container/changePhoneNumber/changePhoneNumber";
 import { labelMap } from "@/components/constants/labelMap";
 import ServicesOffered from "@/components/container/servicesOffered/servicesOffered";
 import FrequentlyAskedQuestion from "@/components/container/frequentlyAskedQuestion/frequentlyAskedQuestion";
@@ -72,9 +70,6 @@ export default function Chatbot({
   const [isfeedback, setisfeedback] = useState(false);
   const [videoURLMessage, isvideoURLMessage] = useState(false);
   const [typing, setTyping] = useState(true);
-  const [resendOTP, isresendOTP] = useState(false);
-  const [changephonenumber, ischangephonenumber] = useState(false);
-
   const [underdevelopementsection, isunderdevelopementsection] = useState(true);
   const [initialOptions, setinitialOptions] = useState(true);
   const [translatedOptions, setTranslatedOptions] = useState(options);
@@ -500,60 +495,6 @@ export default function Chatbot({
             previousMessages={messages}
           />
         )}
-        <div className="flex flex-row gap-2 w-[90%] pl-2  justify-center">
-          {(messages[messages.length - 1]?.contentType === "resend_otp" ||
-            messages[messages.length - 1]?.contentType ===
-              "change_phone_number") && (
-            <>
-              <button
-                className=" w-[50%] whitespace-nowrap cursor-pointer border border-indira_dark_red text-indira_text font-indira_font text-xs px-2 py-2 rounded-full hover:text-indira_hover_text transition flex-shrink-0"
-                onClick={() => {
-                  ischangephonenumber(true);
-                }}
-              >
-                <span className="block overflow-hidden truncate whitespace-nowrap w-full text-center">
-                  Change Mobile Number
-                </span>
-              </button>
-            </>
-          )}
-          {messages[messages.length - 1]?.contentType === "resend_otp" && (
-            <>
-              <button
-                className=" w-[50%] whitespace-nowrap cursor-pointer border border-indira_dark_red text-indira_text font-indira_font text-xs px-2 py-2 rounded-full hover:text-indira_hover_text transition flex-shrink-0"
-                onClick={() => {
-                  isresendOTP(true);
-                }}
-              >
-                Resend OTP
-              </button>
-            </>
-          )}
-        </div>
-
-        {resendOTP && (
-          <ResendOTP
-            selectedLang={selectedLang}
-            setMessages={setMessages}
-            setTyping={setTyping}
-            newThreadID={newThreadID}
-            setSelectedOption={setSelectedOption}
-            setshowoptions={setshowoptions}
-            isresendOTP={isresendOTP}
-          />
-        )}
-        {changephonenumber && (
-          <ChangePhoneNumber
-            selectedLang={selectedLang}
-            setMessages={setMessages}
-            setTyping={setTyping}
-            newThreadID={newThreadID}
-            setSelectedOption={setSelectedOption}
-            setshowoptions={setshowoptions}
-            ischangephonenumber={ischangephonenumber}
-          />
-        )}
-
         {selectedLang && !selectedOption && showoptions && initialOptions && (
           <div className="flex flex-wrap gap-2">
             {translatedOptions.map((opt, i) => (

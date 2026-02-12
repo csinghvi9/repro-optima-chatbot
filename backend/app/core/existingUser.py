@@ -1,7 +1,6 @@
 from app.models.user_info import User_Info
 from app.models.threads import Thread
 from bson import ObjectId
-from app.models.otp_verification import OtpVerification
 
 
 async def step_check(thread_id, flow, total_step):
@@ -15,26 +14,12 @@ async def step_check(thread_id, flow, total_step):
                 thread.step_id = flow["steps"]["1"]["next_step"]
                 await thread.save()
                 user_message = user.name
-            elif str(i) == "2" and user.phone_number and user.name:
-                otp_user = await OtpVerification.find_one(
-                    OtpVerification.thread_id == thread_id
-                )
-                if otp_user.is_verified:
-                    thread.step_id = flow["steps"]["3"]["next_step"]
-                    await thread.save()
-                    user_message = otp_user.otp_code
-                else:
-                    thread.step_id = flow["steps"]["2"]["next_step"]
-                    await thread.save()
-                    user_message = user.phone_number
-                    return user_message
-
-            elif str(i) == "4" and user.pincode and user.name and user.phone_number:
-                thread.step_id = flow["steps"]["4"]["next_step"]
+            elif str(i) == "2" and user.name and user.pincode:
+                thread.step_id = flow["steps"]["2"]["next_step"]
                 await thread.save()
                 user_message = str(user.pincode)
             elif (
-                str(i) == "5" and user.pincode and user.name and user.phone_number
+                str(i) == "5" and user.pincode and user.name
             ):  # and user.preffered_center
                 if thread.flow_id != "book_appointment":
                     user_message = str(user.pincode)

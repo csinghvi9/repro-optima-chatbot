@@ -84,23 +84,7 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                 step_id = thread.step_id
                 language = thread.language
                 messages = []
-                if (
-                    data.get("isflow") == "confirm"
-                    and data.get("subtype") == "resend_otp"
-                ):
-                    flow_id = thread.flow_id
-                    step_id = thread.step_id
-                elif (
-                    data.get("isflow") == "confirm"
-                    and data.get("subtype") == "change_phone_number"
-                ):
-                    flow_id = thread.flow_id
-                    thread.step_id = "2"
-                    await thread.save()
-                    step_id = "2"
-                    user = await User_Info.find_one(User_Info.thread_id == thread_id)
-                    content = user.name
-                elif data.get("isflow") == "confirm":
+                if data.get("isflow") == "confirm":
                     thread.flow_id = data.get("subtype")
                     thread.step_id = None
                     await thread.save()
@@ -261,32 +245,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                     "contentType": contentType if index == 1 else None,
                                 }
                             )
-                    elif contentType == "resend_otp":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": contentType,
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": contentType}
-                        )
-                    elif contentType == "change_phone_number":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": contentType,
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": contentType}
-                        )
 
                     elif (
                         isinstance(response, list) and contentType == "invalid_feedback"
@@ -800,32 +758,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                             )
                             # if video_url:
                             #     messages.append({"response":video_url,"contentType":"video_url"})
-                    elif contentType == "change_phone_number":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": contentType,
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": contentType}
-                        )
-                    elif contentType == "resend_otp":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": contentType,
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": contentType}
-                        )
                     elif (
                         isinstance(response, list) and contentType == "invalid_feedback"
                     ):
@@ -922,32 +854,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                     {"response": video_url, "contentType": "video_url"}
                                 )
 
-                    elif contentType == "change_phone_number":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": contentType,
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": contentType}
-                        )
-                    elif contentType == "resend_otp":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": contentType,
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": contentType}
-                        )
                     elif (
                         isinstance(response, list) and contentType == "invalid_feedback"
                     ):
@@ -1600,33 +1506,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                     "contentType": "out_of_context" if i == 1 else None,
                                 }
                             )
-                    elif contentType == "change_phone_number":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": contentType,
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": contentType}
-                        )
-
-                    elif contentType == "resend_otp":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": contentType,
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": contentType}
-                        )
                     elif (
                         isinstance(response, list) and contentType == "invalid_feedback"
                     ):
