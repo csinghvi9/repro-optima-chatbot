@@ -5,3 +5,6 @@ __pycache__/
 
 chroma_db/
 .venv/
+.env
+*.pem
+.DS_Store
