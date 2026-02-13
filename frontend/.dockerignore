@@ -1,0 +1,19 @@
+# dependencies
+node_modules
+.npm
+.pnp
+.pnp.js
+
+# build output
+.next
+out
+
+# misc
+Dockerfile
+.dockerignore
+.git
+.gitignore
+*.md
+*.pem
+*.sh
+*.yml

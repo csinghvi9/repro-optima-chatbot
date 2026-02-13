@@ -1,0 +1,48 @@
+{
+  "name": "my-next-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack -p 443",
+    "build": "next build",
+    "start": "next start -p 443",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@heroui/calendar": "^2.2.24",
+    "@xenova/transformers": "^2.17.2",
+    "axios": "^1.8.4",
+    "classnames": "^2.5.1",
+    "js-cookie": "^3.0.5",
+    "lucide-react": "^0.487.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.46.0",
+    "next": "^15.2.8",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "styled-components": "^6.1.17",
+    "swiper": "^11.2.8",
+    "tailwind-scrollbar": "^4.0.2",
+    "tailwind-scrollbar-hide": "^2.0.0",
+    "websocket": "^1.0.35",
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-loader": "^10.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.4",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1"
+  }
+}

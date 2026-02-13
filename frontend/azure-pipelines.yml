@@ -1,0 +1,67 @@
+# Node.js with React
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+
+trigger: none
+variables:
+  DOCKER_REPOSITORY_NAME: " indra-chatbot-frontend"
+  AWS_REGION: "ap-south-1"  # Replace with your region
+
+stages:
+- stage: Docker
+  displayName: Build & Push Docker image to AWS ECR
+  jobs:
+  - job: Build_and_Push
+    displayName: Build & Push Docker image
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: Docker@2
+      displayName: Build an image
+      inputs:
+        command: build
+        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+        buildContext: '$(Build.SourcesDirectory)'
+        repository: $(DOCKER_REPOSITORY_NAME)
+ 
+    - task: ECRPushImage@1
+      inputs:
+        awsCredentials: 'AI_Poc'
+        regionName: '$(AWS_REGION)'
+        imageSource: 'imagename'
+        sourceImageName: $(DOCKER_REPOSITORY_NAME)
+        sourceImageTag: $(Build.BuildId)
+        pushTag: latest
+        repositoryName: $(DOCKER_REPOSITORY_NAME)
+
+    # Step 3: Download SSH key for EC2 connection
+    - task: DownloadSecureFile@1
+      name: DownloadSSHKey
+      inputs:
+        secureFile: 'aI-demo-apps-ec2-key.pem'  # The name of the secure file in your Azure DevOps library
+
+    # Step 4: Set file permissions and SSH into EC2 instance to run 
+    - script: |
+        chmod 600 $(DownloadSSHKey.secureFilePath)  # Set permissions for the key
+        ssh -i $(DownloadSSHKey.secureFilePath) -o StrictHostKeyChecking=no ubuntu@15.206.58.185 << 'EOF'
+          # Switch to root user
+          sudo su
+          
+          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 628316596570.dkr.ecr.ap-south-1.amazonaws.com
+
+          # Clean up Docker system (prune unused images, volumes, networks)
+          docker system prune --all --volumes -f
+
+          # Restart the backend service
+          systemctl restart chat_botfrontend.service
+
+          echo "Commands executed successfully on EC2."
+        EOF
+      displayName: 'Connect to EC2 and Execute Commands'
+
+    # Step 5: Clean up the SSH key file after use
+    - script: |
+        rm -f $(DownloadSSHKey.secureFilePath)  # Clean up the key file after use
+      displayName: 'Clean up SSH key'

@@ -1,0 +1,46 @@
+Metadata-Version: 2.4
+Name: iivf-chatbot-backend
+Version: 0.1.0
+Summary: AI-powered backend for IVF chatbot
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.110.0
+Requires-Dist: uvicorn[standard]>=0.20.0
+Requires-Dist: beanie>=1.29.0
+Requires-Dist: pydantic[email]>=2.11.3
+Requires-Dist: pydantic-settings>=2.8.1
+Requires-Dist: bcrypt>=4.3.0
+Requires-Dist: passlib[bcrypt]>=1.7.4
+Requires-Dist: pyjwt>=2.10.1
+Requires-Dist: redis>=5.2.1
+Requires-Dist: openai==1.74.0
+Requires-Dist: kafka-python>=2.1.5
+Requires-Dist: aiohttp>=3.11.18
+Requires-Dist: chromadb==0.4.24
+Requires-Dist: numpy==1.26.4
+Requires-Dist: boto3>=1.40.18
+Requires-Dist: geopy>=2.4.1
+Requires-Dist: haversine>=2.9.0
+Requires-Dist: email-validator>=2.3.0
+Requires-Dist: motor>=3.3.1
+
+# Introduction 
+TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+
+# Getting Started
+TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
+1.	Installation process
+2.	Software dependencies
+3.	Latest releases
+4.	API references
+
+# Build and Test
+TODO: Describe and show how to build your code and run the tests. 
+
+# Contribute
+TODO: Explain how other users and developers can contribute to make your code better. 
+
+If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
+- [ASP.NET Core](https://github.com/aspnet/Home)
+- [Visual Studio Code](https://github.com/Microsoft/vscode)
+- [Chakra Core](https://github.com/Microsoft/ChakraCore)
