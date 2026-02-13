@@ -13,11 +13,7 @@ def configure_app(app: FastAPI):
     # Add CORS middleware using settings from the config file
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "https://uatiivfchatbot.indiraivf.com",
-            "http://localhost:3000",
-            "http://localhost",
-        ],
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

@@ -1,39 +1,9 @@
-# from beanie import init_beanie
-# from motor.motor_asyncio import AsyncIOMotorClient
-# from app.utils.config import ENV_PROJECT
-# from app.models.users import User
-# from app.models.threads import Thread
-# from app.models.message import Message
-# from app.models.user_info import User_Info
-# from app.models.ivf_centers import IVF_Center
-# from app.models.otp_verification import OtpVerification
-# from app.models.loan_model import Loan_User
-# ivf_centers = None
-
-# async def init_db():
-#     try:
-#         print("DataBase URL",ENV_PROJECT.DATABASE_URL)
-#         client = AsyncIOMotorClient(ENV_PROJECT.DATABASE_URL)
-#         database = client.get_database("indra_ivf")
-#         # Initialize Beanie with the database and models
-#         await init_beanie(database, document_models=[User, Thread,User_Info,IVF_Center,OtpVerification,Loan_User])
-#     except Exception as e:
-#         print(f"Error initializing database: {e}")
-#         raise
-
-
-from azure.identity import AzureCliCredential, DefaultAzureCredential, EnvironmentCredential
-from azure.keyvault.secrets import SecretClient
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from beanie import init_beanie
 from app.utils.config import ENV_PROJECT
 
-
-# Key Vault and DB config from .env
-KEY_VAULT_URL = ENV_PROJECT.KEY_VAULT_URL
-SECRET_NAME = ENV_PROJECT.SECRET_NAME
 DATABASE_URL = ENV_PROJECT.DATABASE_URL
-MONGO_DB_NAME = ENV_PROJECT.MONGO_DB_NAME 
+MONGO_DB_NAME = ENV_PROJECT.MONGO_DB_NAME
 
 # Models
 from app.models.users import User
@@ -52,21 +22,22 @@ async def init_db():
     global db_client, database
 
     try:
-        # Azure Key Vault client (uses az login for local dev)
-        # credential = AzureCliCredential()
-        # credential = DefaultAzureCredential() 
-        credential = EnvironmentCredential()
-        print("✅ Azure CLI credential acquired.", DATABASE_URL)
-        print("🔐 Connecting to Azure Key Vault...", KEY_VAULT_URL)
-        secret_client = SecretClient(vault_url=KEY_VAULT_URL, credential=credential)
+        use_keyvault = getattr(ENV_PROJECT, 'KEY_VAULT_URL', '') and getattr(ENV_PROJECT, 'AZURE_CLIENT_ID', '')
 
-        # Fetch password and build full URI
-        print(f"🔐 Fetching DB password for secret: {SECRET_NAME}...")
-        db_password = secret_client.get_secret(SECRET_NAME).value
-        print("✅ DB password fetched.", db_password)
-        final_db_uri = DATABASE_URL.replace("{password}", db_password)
+        if use_keyvault and ENV_PROJECT.KEY_VAULT_URL and "{password}" in DATABASE_URL:
+            # Azure Key Vault mode: fetch password from Key Vault
+            from azure.identity import EnvironmentCredential
+            from azure.keyvault.secrets import SecretClient
 
-        print("🔐 Connecting to MongoDB...", final_db_uri)
+            credential = EnvironmentCredential()
+            secret_client = SecretClient(vault_url=ENV_PROJECT.KEY_VAULT_URL, credential=credential)
+            db_password = secret_client.get_secret(ENV_PROJECT.SECRET_NAME).value
+            final_db_uri = DATABASE_URL.replace("{password}", db_password)
+            print(f"Connected using Azure Key Vault for database: {MONGO_DB_NAME}")
+        else:
+            # Direct connection mode: DATABASE_URL contains the full connection string
+            final_db_uri = DATABASE_URL
+            print(f"Connected using direct DATABASE_URL for database: {MONGO_DB_NAME}")
 
         # Connect to MongoDB
         db_client = AsyncIOMotorClient(final_db_uri)
@@ -86,7 +57,7 @@ async def init_db():
             ]
         )
 
-        print(f"✅ MongoDB connected and Beanie initialized for database: {MONGO_DB_NAME}")
+        print(f"MongoDB connected and Beanie initialized for database: {MONGO_DB_NAME}")
     except Exception as e:
-        print(f"❌ Error initializing DB: {e}")
+        print(f"Error initializing DB: {e}")
         raise
