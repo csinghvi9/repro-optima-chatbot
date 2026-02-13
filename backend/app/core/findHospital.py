@@ -4,7 +4,7 @@ from bson import ObjectId
 
 
 CLINIC_CENTER = {
-    "Clinic Name": "Meddilink IVF - Cebu City",
+    "Clinic Name": "Repro Optima - Cebu City",
     "Address": "Ground Floor, JRDC Bldg, Osmeña Blvd, Cebu City, 6000 Cebu, Philippines",
     "City": "Cebu City",
     "State": "Cebu",

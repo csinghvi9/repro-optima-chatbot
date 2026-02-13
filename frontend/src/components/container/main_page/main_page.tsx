@@ -144,14 +144,16 @@ const ChatbotWidget: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-[#FFF5F6] via-[#FFEEF0] to-[#FFF8F0]"
+      className="min-h-screen w-full relative overflow-hidden"
+      style={{
+        backgroundImage: "url('/clinic-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
     >
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-[#F04F5F]/5 blur-3xl" />
-        <div className="absolute -bottom-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-[#CE3149]/5 blur-3xl" />
-        <div className="absolute top-[40%] left-[30%] w-[30%] h-[30%] rounded-full bg-[#D4A03C]/5 blur-2xl" />
-      </div>
+      {/* Semi-transparent overlay for readability */}
+      <div className="absolute inset-0 bg-white/60 pointer-events-none" />
       {/* Centered logo */}
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
         <img

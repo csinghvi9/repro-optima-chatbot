@@ -59,12 +59,12 @@ const SuccessRateMessage: React.FC<SuccessRateMessageProps> = ({ msg }) => {
                 />
                 <p className="font-indira_font text-xs mt-2 pl-2 md:pl-4  w-[90%] text-indira_text">{msg.first_text}</p>
                 <div className="mt-auto">
-                    <img src="./doctors.svg" className="w-full object-contain rounded-b-[10px]" alt="doctors" />
+                    <img src="./doctor-image.jpg" className="w-full object-cover rounded-b-[10px]" alt="doctors" />
                 </div>
             </div>
 
             {/* Right card */}
-            <div className="flex flex-col items-center w-[50%] bg-[linear-gradient(299.72deg,rgba(251,248,255,0.5)_53.78%,#FFFFFF_100%)] border border-indira_divider rounded-[10px] pl-2 md:pl-4  pt-2">
+            <div className="flex flex-col items-center w-[50%] bg-[linear-gradient(299.72deg,rgba(251,248,255,0.5)_53.78%,#FFFFFF_100%)] border border-indira_divider rounded-[10px] pt-2">
                 <div className="flex flex-col flex-1 h-[30%] md:h-[40%]">
                     <h2 className="text-[16px] text-indira_dark_red font-semibold font-indira_font text-nowrap">
                         {msg.second_heading}
@@ -75,8 +75,8 @@ const SuccessRateMessage: React.FC<SuccessRateMessageProps> = ({ msg }) => {
                 </div>
                 <div className="flex w-full h-[70%] md:h-[60%] items-end justify-end">
                     <img
-                        src="./parents.svg"
-                        className=" h-auto object-contain rounded-b-[10px]"
+                        src="./happy-family.jpg"
+                        className=" h-auto object-cover rounded-b-[10px]"
                         alt="happy couple"
                     />
                 </div>
