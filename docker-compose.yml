@@ -18,6 +18,8 @@ services:
       args:
         NEXT_PUBLIC_API_BASE_URL: http://localhost:8001
         NEXT_PUBLIC_WEBSOCKET_URL: ws://localhost:8001
+        # NEXT_PUBLIC_API_BASE_URL: https://ivf-dev-backend-ra.meddilink.com
+        # NEXT_PUBLIC_WEBSOCKET_URL: wss://ivf-dev-backend-ra.meddilink.com
     container_name: ivf-frontend
     ports:
       - "3000:443"

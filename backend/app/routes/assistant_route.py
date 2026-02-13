@@ -28,17 +28,14 @@ from app.core.cancelReschedule import cancelRescheduleFlow
 from app.core.greetings import greetingsFlow
 from app.core.faqflow import FAQFlow
 from app.core.faqflow import query_vectorstore
+from app.core.faqTabAnswer import faqTabAnswers
 from app.core.findHospital import FindHospital
 from app.core.addOnService import AddONServices
-from app.core.videoURL import get_video_url
-from app.schemas.videos import VideoCategory
 from app.models.message import Message
 from app.core.language_change_flow import LanguageChange
 from app.models.user_info import User_Info
 from app.utils.config import ENV_PROJECT
 from app.utils.llm_utils import ask_openai_validation_assistant
-from app.core.patientTestimonials import patientTestimonialsSorryMessage
-from app.core.faqTabAnswer import faqTabAnswers
 
 
 router = APIRouter()
@@ -289,6 +286,40 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                 {"response": item, "contentType": contentType}
                             )
 
+                    elif isinstance(response, list) and contentType == "booked_with_centers":
+                        # response = [clinic_data_list, booked_message_list]
+                        # First send centers
+                        centers_data = response[0]
+                        await websocket.send_text(
+                            json.dumps(
+                                {
+                                    "type": "message",
+                                    "text": centers_data,
+                                    "contentType": "centers",
+                                }
+                            )
+                        )
+                        messages.append(
+                            {"response": centers_data, "contentType": "centers"}
+                        )
+                        # Then send booked confirmation
+                        booked_msg = response[1]
+                        for i, item in enumerate(booked_msg):
+                            await websocket.send_text(
+                                json.dumps(
+                                    {
+                                        "type": "message",
+                                        "text": item,
+                                        "contentType": "booked" if i == 0 else None,
+                                    }
+                                )
+                            )
+                            messages.append(
+                                {
+                                    "response": item,
+                                    "contentType": "booked" if i == 0 else None,
+                                }
+                            )
                     elif isinstance(response, list) and contentType == "booked":
                         for i, item in enumerate(response):
                             await websocket.send_text(
@@ -370,56 +401,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                             {"response": response, "contentType": contentType}
                         )
                 elif (
-                    data.get("subtype") == "patient_testimonals"
-                    or flow_id == "patient_testimonals"
-                ):
-                    video_url = await get_video_url(VideoCategory.PATIENT, language)
-                    if len(video_url["video_url"]) != 0:
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": "",
-                                    "contentType": "video_url",
-                                    "video_url": video_url["video_url"],
-                                }
-                            )
-                        )
-                        messages.append(
-                            {
-                                "response": video_url["video_url"],
-                                "contentType": "video_url",
-                            }
-                        )
-                    else:
-                        answer = await patientTestimonialsSorryMessage(language)
-                        for i in range(len(answer)):
-                            await websocket.send_text(
-                                json.dumps(
-                                    {
-                                        "type": "message",
-                                        "text": answer[i],
-                                        "contentType": (
-                                            "out_of_context" if i == 1 else None
-                                        ),
-                                    }
-                                )
-                            )
-                            messages.append(
-                                {
-                                    "response": answer[i],
-                                    "contentType": "out_of_context" if i == 1 else None,
-                                }
-                            )
-                    thread = await Thread.find_one(Thread.id == ObjectId(thread_id))
-                    if thread:
-                        thread.flow_id = None
-                        thread.step_id = None
-                        thread.previous_flow = "patient_testimonals"
-                        thread.previous_step = thread.step_id
-                        await thread.save()
-
-                elif (
                     data.get("subtype") == "ivf_success_calculator"
                     or flow_id == "ivf_success_calculator"
                 ):
@@ -447,27 +428,18 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                         )
                         messages.append({"response": message[0], "contentType": None})
                         # Second message
-                        video_url = await get_video_url(VideoCategory.DOCTOR, language)
                         await websocket.send_text(
                             json.dumps(
                                 {
                                     "type": "message",
                                     "text": message[1],
                                     "contentType": "ivf_calculate",
-                                    "video_url": video_url.get("video_url"),
                                 }
                             )
                         )
                         messages.append(
                             {"response": message[1], "contentType": "ivf_calculate"}
                         )
-                        if video_url:
-                            messages.append(
-                                {
-                                    "response": video_url["video_url"],
-                                    "contentType": "video_url",
-                                }
-                            )
 
                 elif (data.get("subtype") == "Lifestyle_and_Preparations") or (
                     flow_id == "Lifestyle_and_Preparations"
@@ -618,21 +590,12 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                         )
                     else:
                         if len(response) == 2:
-                            # url = await get_video_url(
-                            #     ["Final_Doctor Videos/Dr.4_Har Patient Ka IVF Journey Alag Kyun Hota Hai.mp4","Final_Doctor Videos/Dr.3_IVF Success ke common myths - Toot gaye.mp4",
-                            #      "Final_Doctor Videos/Dr.2_IVF Success Kaise Calculate Hota Hai_2.mp4","Final_Doctor Videos/Dr.1_Indira IVF Ke Success Ka Secret Kya Hai.mp4"],
-                            #     "indiraivf-report-analyzer-public",
-                            # )
-                            video_url = await get_video_url(
-                                VideoCategory.SUCCESSRATE, language
-                            )
                             await websocket.send_text(
                                 json.dumps(
                                     {
                                         "type": "message",
                                         "text": response[0],
                                         "contentType": "success_rate",
-                                        "video_url": None,
                                     }
                                 )
                             )
@@ -645,7 +608,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                         "type": "message",
                                         "text": response[1],
                                         "contentType": "ivf_calculate",
-                                        "video_url": video_url.get("video_url"),
                                     }
                                 )
                             )
@@ -655,13 +617,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                     "contentType": "ivf_calculate",
                                 }
                             )
-                            if video_url:
-                                messages.append(
-                                    {
-                                        "response": video_url["video_url"],
-                                        "contentType": "video_url",
-                                    }
-                                )
                         else:
                             if isinstance(response[0], dict):
                                 for i in response:
@@ -682,18 +637,12 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                             }
                                         )
                                     else:
-                                        video_url = await get_video_url(
-                                            VideoCategory.SUCCESSRATE, language
-                                        )
                                         await websocket.send_text(
                                             json.dumps(
                                                 {
                                                     "type": "message",
                                                     "text": i,
                                                     "contentType": "ivf_calculate",
-                                                    "video_url": video_url.get(
-                                                        "video_url"
-                                                    ),
                                                 }
                                             )
                                         )
@@ -703,13 +652,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                                 "contentType": "ivf_calculate",
                                             }
                                         )
-                                        if video_url:
-                                            messages.append(
-                                                {
-                                                    "response": video_url["video_url"],
-                                                    "contentType": "video_url",
-                                                }
-                                            )
                             else:
                                 for i in response:
                                     await websocket.send_text(
@@ -732,11 +674,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                     if isinstance(response, list) and contentType == "ivf_steps":
                         target_index = 2 if len(response) == 5 else 1
                         for i in range(len(response)):
-                            # if i == (target_index+2):
-                            #     video_url = await get_video_url(VideoCategory.DOCTOR,language)
-                            #     video_url = video_url.get('video_url')
-                            # else:
-                            #     video_url = None
                             if i == len(response) - 1:
                                 contentType = "feedback"
                             elif i == target_index:
@@ -749,15 +686,12 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                         "type": "message",
                                         "text": response[i],
                                         "contentType": contentType,
-                                        # "video_url": video_url,
                                     }
                                 )
                             )
                             messages.append(
                                 {"response": response[i], "contentType": contentType}
                             )
-                            # if video_url:
-                            #     messages.append({"response":video_url,"contentType":"video_url"})
                     elif (
                         isinstance(response, list) and contentType == "invalid_feedback"
                     ):
@@ -825,16 +759,10 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                         for i in range(len(response)):
                             if i == target_index:
                                 content_type = "cost_and_package"
-                                video_url = None
                             elif i == (target_index + 1):
                                 content_type = "book_appointment"
-                                video_url = await get_video_url(
-                                    VideoCategory.IVFCOST, language
-                                )
-                                video_url = video_url.get("video_url")
                             else:
                                 content_type = None
-                                video_url = None
 
                             await websocket.send_text(
                                 json.dumps(
@@ -842,17 +770,12 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                         "type": "message",
                                         "text": response[i],
                                         "contentType": content_type,
-                                        "video_url": video_url,
                                     }
                                 )
                             )
                             messages.append(
                                 {"response": response[i], "contentType": content_type}
                             )
-                            if video_url:
-                                messages.append(
-                                    {"response": video_url, "contentType": "video_url"}
-                                )
 
                     elif (
                         isinstance(response, list) and contentType == "invalid_feedback"
@@ -930,13 +853,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                         )
                     else:
                         for i in range(len(response)):
-                            if i == 1:
-                                video_url = await get_video_url(
-                                    VideoCategory.PATIENT, language
-                                )
-                                video_url = video_url.get("video_url")
-                            else:
-                                video_url = None
                             if i == len(response) - 1:
                                 contentType = "feedback"
                             elif i == 1:
@@ -951,17 +867,12 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                         "type": "message",
                                         "text": response[i],
                                         "contentType": contentType,
-                                        "video_url": video_url,
                                     }
                                 )
                             )
                             messages.append(
                                 {"response": response[i], "contentType": contentType}
                             )
-                            if video_url:
-                                messages.append(
-                                    {"response": video_url, "contentType": "video_url"}
-                                )
 
                 elif (data.get("subtype") == "out_of_context") or (
                     flow_id == "out_of_context"
@@ -1006,13 +917,13 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                     json.dumps(
                                         {
                                             "type": "message",
-                                            "text": response[i],
+                                            "text": response,
                                             "contentType": "faqflow",
                                         }
                                     )
                                 )
                                 messages.append(
-                                    {"response": response[i], "contentType": "faqflow"}
+                                    {"response": response, "contentType": "faqflow"}
                                 )
 
                         else:
@@ -1287,13 +1198,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                     response, isrelevant = await FAQFlow(content, language, thread_id)
                     if isinstance(response, list) and data.get("isflow") == "confirm":
                         for i in range(len(response)):
-                            if len(response) == 1:
-                                video_url = await get_video_url(
-                                    VideoCategory.UNDERSTANDINGIVF, language
-                                )
-                                video_url = video_url.get("video_url")
-                            else:
-                                video_url = None
                             if isinstance(response[i], dict):
                                 contentType = "out_of_context"
                             else:
@@ -1306,7 +1210,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                         "contentType": (
                                             "ivf_question" if i == 0 else contentType
                                         ),
-                                        "video_url": video_url,
                                     }
                                 )
                             )
@@ -1318,104 +1221,93 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                                     ),
                                 }
                             )
-                            if video_url:
-                                messages.append(
-                                    {"response": video_url, "contentType": "video_url"}
-                                )
                     elif data.get("isflow") == "confirm":
-                        video_url = await get_video_url(
-                            VideoCategory.UNDERSTANDINGIVF, language
-                        )
-                        video_url = video_url.get("video_url")
                         await websocket.send_text(
                             json.dumps(
                                 {
                                     "type": "message",
                                     "text": response,
                                     "contentType": "ivf_question",
-                                    "video_url": video_url,
                                 }
                             )
                         )
                         messages.append(
                             {"response": response, "contentType": "ivf_question"}
                         )
-                        if video_url:
-                            messages.append(
-                                {"response": video_url, "contentType": "video_url"}
-                            )
-                    else:
-                        if isrelevant:
-                            if isinstance(response, list):
-                                contentType = None
-                                for i in range(len(response)):
-                                    if i == 0:
-                                        contentType = "faqflow"
-                                    else:
-                                        contentType = None
-                                    await websocket.send_text(
-                                        json.dumps(
-                                            {
-                                                "type": "message",
-                                                "text": response[i],
-                                                "contentType": contentType,
-                                            }
-                                        )
-                                    )
-                                    messages.append(
-                                        {
-                                            "response": response[i],
-                                            "contentType": contentType,
-                                        }
-                                    )
-                            else:
+                    elif isrelevant:
+                        if isinstance(response, list):
+                            for i in range(len(response)):
+                                if i == 0:
+                                    contentType = "faqflow"
+                                else:
+                                    contentType = None
                                 await websocket.send_text(
                                     json.dumps(
                                         {
                                             "type": "message",
                                             "text": response[i],
-                                            "contentType": "faqflow",
+                                            "contentType": contentType,
                                         }
                                     )
                                 )
                                 messages.append(
-                                    {"response": response[i], "contentType": "faqflow"}
+                                    {
+                                        "response": response[i],
+                                        "contentType": contentType,
+                                    }
                                 )
                         else:
-                            if isinstance(response, list):
-                                for i in range(len(response)):
-                                    if isinstance(response[i], dict):
-                                        contentType = "out_of_context"
-                                    else:
-                                        contentType = None
-                                    await websocket.send_text(
-                                        json.dumps(
-                                            {
-                                                "type": "message",
-                                                "text": response[i],
-                                                "contentType": contentType,
-                                            }
-                                        )
-                                    )
-                                    messages.append(
-                                        {
-                                            "response": response[i],
-                                            "contentType": contentType,
-                                        }
-                                    )
-                            else:
+                            await websocket.send_text(
+                                json.dumps(
+                                    {
+                                        "type": "message",
+                                        "text": response,
+                                        "contentType": "faqflow",
+                                    }
+                                )
+                            )
+                            messages.append(
+                                {"response": response, "contentType": "faqflow"}
+                            )
+                    else:
+                        if isinstance(response, list):
+                            for i in range(len(response)):
+                                if isinstance(response[i], dict):
+                                    contentType = "out_of_context"
+                                else:
+                                    contentType = None
                                 await websocket.send_text(
                                     json.dumps(
                                         {
                                             "type": "message",
-                                            "text": response,
-                                            "contentType": None,
+                                            "text": response[i],
+                                            "contentType": contentType,
                                         }
                                     )
                                 )
                                 messages.append(
-                                    {"response": response, "contentType": None}
+                                    {
+                                        "response": response[i],
+                                        "contentType": contentType,
+                                    }
                                 )
+                        else:
+                            await websocket.send_text(
+                                json.dumps(
+                                    {
+                                        "type": "message",
+                                        "text": response,
+                                        "contentType": "invalid_feedback",
+                                    }
+                                )
+                            )
+                            messages.append(
+                                {
+                                    "response": response,
+                                    "contentType": "invalid_feedback",
+                                }
+                            )
+
                 elif (data.get("subtype") == "frequently_asked_questions") or (
                     flow_id == "frequently_asked_questions"
                 ):

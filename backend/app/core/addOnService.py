@@ -2,6 +2,7 @@ from app.utils.llm_utils import ask_openai_validation_assistant
 from app.models.threads import Thread
 from app.models.user_info import User_Info
 from app.core.ivf_centers import find_pincode_by_city_name
+from app.core.findHospital import CLINIC_CENTER
 from bson import ObjectId
 import json
 import re
@@ -31,7 +32,7 @@ async def AddONServices(
                     {
                         "first_text": "For more specific information, please connect with our call center between 9 AM and 6 PM.",
                         "second_text": "CUSTOMER CARE NUMBER",
-                        "phone_number": "18003092323",
+                        "phone_number": "+6332-256-2433",
                     },
                     "Hope this helps! You can come back anytime to explore  or get more info",
                 ],
@@ -40,7 +41,10 @@ async def AddONServices(
             },
             "2": {
                 "step_id": "2",
-                "message": "Thanks. Now please mention your preferred pin code or city name",
+                "message": [
+                    "Thank you for sharing your details",
+                    "To understand more about these, search for them in the query box below",
+                ],
                 "expected_input": "name of the person or nick name of the person and can be any name in any language like (miqat,ekal,ellis etc) and a valid name not like abc xyz",
                 "valid_condition": r"^[A-Za-z\s]{2,50}$",
                 "action": None,
@@ -49,7 +53,7 @@ async def AddONServices(
                     "We cannot continue without your name. Please enter your name to proceed",
                     "You can still explore information without giving your name. Would you like to know about topics below",
                 ],
-                "next_step": "5",
+                "next_step": None,
             },
             "5": {
                 "step_id": "5",
@@ -72,24 +76,18 @@ async def AddONServices(
         },
     }
     allowed_add_on_services = [
-        "Test",
-        "1. Anti-Müllerian Hormone (AMH) Test",
-        "2. Hormonal Profile Panel",
-        "3. Transvaginal Pelvic Ultrasound ",
-        "4. Azoospermia Panel ",
-        "5. NIPT (Non-Invasive Prenatal Testing) ",
-        "6. sFlt-1/PlGF Ratio",
         "Services:",
-        "1. Endometrial Receptivity Analysis (ERA)",
-        "2. Genetic Testing (PGT-A / PGT-M) ",
-        "3. Semen Analysis",
-        "4. Sperm DNA Fragmentation Test",
-        "5. Embryo Glue",
-        "6. Sperm Sorting Device",
-        "7. Laser Assisted Hatching",
-        "8. Blastocyst Culture",
-        "9. LIT (Lymphocyte Immunotherapy)",
-        "10. TESA (Testicular Sperm Aspiration)",
+        "1. Fertility Screening and Investigation",
+        "2. Ovulation Induction and Monitoring",
+        "3. Intrauterine Insemination (IUI)",
+        "4. In-vitro Fertilization (IVF)",
+        "5. Treatment of Male Infertility / Assisted Fertilization (ICSI)",
+        "6. Gamete Intra-Fallopian Transfer (GIFT), Zygote Intra-Fallopian Transfer (ZIFT) and Tubal Embryo Transfers (TET)",
+        "7. Surgical Sperm Retrieval (MESA, TESE)",
+        "8. Assisted Hatching",
+        "9. Embryo Freezing and Replacement of Frozen Embryos",
+        "10. Sperm, Oocyte and Embryo Banking",
+        "11. Infertility Surgery: Gynecologic Laparoscopy and Hysteroscopy",
     ]
     thread_obj_id = ObjectId(thread_id)
     thread = await Thread.find_one(Thread.id == thread_obj_id)
@@ -185,101 +183,46 @@ async def AddONServices(
     #     print("the test name is ",llm_answer)
 
     if step["step_id"] == "5":
-        match = re.search(r"\b\d{6}\b", user_message)
-        if match:
-            pincode = match.group(0)  # the actual 6-digit code
-            response = True
-        # pass only the pincode
-        # elif len(user_message) == 1 and language=="English":
-        #         response =True
-        #         pincode = await find_pincode_by_city_name(user_message)
-
-        else:
-            prompt = f"Your work is to give the city name from this text:{user_message} if it is in another language other than english then convert city name in english and if there is no city name then return None and If the user refuses to give location information (for example: 'I don't want to share', 'not sure', 'skip', 'no', 'none'), return Invalid. don't give any text from your own only None,Cityname"
-            city_name = await ask_openai_validation_assistant(prompt)
-            if city_name != "None" and city_name != "Invalid":
-                response = True
-                pincode = await find_pincode_by_city_name(city_name)
-            elif city_name in ["Invalid", "invalid"]:
-                if language == "English":
-                    return step["final_text"], "invalid_feedback"
-                else:
-                    prompt = f"You have to just return {step['final_text']} in translated langauage-{language} Output:as list and in same structure like the message which i have given"
-                    llm_answer = await ask_openai_validation_assistant(prompt)
-                    try:
-                        llm_json = ast.literal_eval(llm_answer)
-                    except:
-                        llm_json = [llm_answer]
-                    is_validated, answer = await validate_answer(
-                        llm_json, step["final_text"], language
-                    )
-                    if is_validated:
-                        return llm_json, "invalid_feedback"
-                    else:
-                        return answer, "out_of_context"
-            else:
-                response = False
-
-        if response:
-            user = await User_Info.find_one(User_Info.thread_id == thread_id)
-            # user.preffered_center = response
-            user.pincode = pincode
+        # Skip pincode - directly show services using hardcoded clinic
+        user = await User_Info.find_one(User_Info.thread_id == thread_id)
+        if user:
+            user.preffered_center = [CLINIC_CENTER]
             await user.save()
-            next_step = step["next_step"]
-            user = await User_Info.find_one(User_Info.thread_id == thread_id)
-            if thread:
-                thread.flow_id = flow_id
-                thread.step_id = next_step
-                thread.previous_flow = thread.flow_id
-                thread.previous_step = step["step_id"]
-                await thread.save()
-            if user.preffered__medical_test and user.preffered__medical_test not in [
-                "None",
-                "none",
-            ]:
-                prompt = f"give a brief explaination about this test : {user.preffered__medical_test} in 10-20 wored in this language:{language} output-format:-string"
-                llm_answer = await ask_openai_validation_assistant(
-                    prompt, max_tokens=200
-                )
-                if already_details_given:
-                    step["message"].insert(0, llm_answer)
-                else:
-                    step["message"].insert(1, llm_answer)
-                # step["message"][-1]=step["message"][-1]+"with"+" "+user.preffered__medical_test
+
+        if thread:
+            thread.flow_id = flow_id
+            thread.step_id = None
+            thread.previous_flow = thread.flow_id
+            thread.previous_step = step["step_id"]
+            await thread.save()
+
+        step_msg = list(step["message"])  # copy
+        if user and user.preffered__medical_test and user.preffered__medical_test not in [
+            "None",
+            "none",
+        ]:
+            prompt = f"give a brief explaination about this test : {user.preffered__medical_test} in 10-20 wored in this language:{language} output-format:-string"
+            llm_answer = await ask_openai_validation_assistant(
+                prompt, max_tokens=200
+            )
+            if already_details_given:
+                step_msg.insert(0, llm_answer)
             else:
-                allowed_add_on_services.insert(
-                    0,
-                    "IVF offer a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:",
-                )
-                prompt = f"then return all the test and also  the heading specified in this list  {allowed_add_on_services} translate in this langauge-{language} and separate each test and heading with ending \n  output-string "
-                llm_answer = await ask_openai_validation_assistant(prompt)
-                if already_details_given:
-                    step["message"].insert(0, llm_answer)
-                else:
-                    step["message"].insert(1, llm_answer)
-                # step["message"][-1]=step["message"][-1]
-            if language == "English":
-                return step["message"], "add_on_service"
+                step_msg.insert(1, llm_answer)
         else:
-            if language == "English":
-                return step["other_text"], "invalid_feedback"
+            services_list = list(allowed_add_on_services)
+            services_list.insert(
+                0,
+                "IVF offer a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:",
+            )
+            prompt = f"then return all the test and also  the heading specified in this list  {services_list} translate in this langauge-{language} and separate each test and heading with ending \n  output-string "
+            llm_answer = await ask_openai_validation_assistant(prompt)
+            if already_details_given:
+                step_msg.insert(0, llm_answer)
             else:
-                prompt = f"Translate the following text into {language} and return only the translated text with no additions or explanations:\n{step['other_text']} OUTPUT_FORMAT:list"
-                llm_answer = await ask_openai_validation_assistant(prompt)
-                try:
-                    llm_json = ast.literal_eval(llm_answer)
-                except:
-                    try:
-                        llm_json = ast.literal_eval(llm_answer)
-                    except:
-                        llm_json = [llm_answer]
-                is_validated, answer = await validate_answer(
-                    llm_json, step["other_text"], language
-                )
-                if is_validated:
-                    return llm_json, "invalid_feedback"
-                else:
-                    return answer, "out_of_context"
+                step_msg.insert(1, llm_answer)
+
+        return step_msg, "add_on_service"
         # else:
         # return ["Sorry, the Pincode is invalid"," Please enter a valid pincode to check clinic availability near you"], None
     if step["step_id"] == "1":
@@ -464,11 +407,43 @@ async def AddONServices(
         if step["step_id"] == "2":
             user_info = await User_Info.find_one(User_Info.thread_id == thread_id)
             user_info.name = user_message
+            user_info.preffered_center = [CLINIC_CENTER]
             await user_info.save()
-        if step["step_id"] == "5":
-            user = await User_Info.find_one(User_Info.thread_id == thread_id)
-            user.pincode = user_message
-            await user.save()
+
+            # Directly show services (skip pincode step)
+            if thread:
+                thread.flow_id = flow_id
+                thread.step_id = None
+                thread.step_count = 1
+                thread.previous_flow = thread.flow_id
+                thread.previous_step = step["step_id"]
+                await thread.save()
+
+            # Build service response
+            step_msg = list(step["message"])  # copy
+            if user_info.preffered__medical_test and user_info.preffered__medical_test not in [
+                "None",
+                "none",
+            ]:
+                prompt = f"give a brief explaination about this test : {user_info.preffered__medical_test} in 10-20 wored in this language:{language} output-format:-string"
+                llm_answer = await ask_openai_validation_assistant(
+                    prompt, max_tokens=200
+                )
+                step_msg.insert(1, llm_answer)
+            else:
+                services_list = list(allowed_add_on_services)
+                services_list.insert(
+                    0,
+                    "IVF offer a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:",
+                )
+                prompt = f"then return all the test and also  the heading specified in this list  {services_list} translate in this langauge-{language} and separate each test and heading with ending \n  output-string "
+                llm_answer = await ask_openai_validation_assistant(prompt)
+                step_msg.insert(1, llm_answer)
+
+            if language == "English":
+                return step_msg, "add_on_service"
+            else:
+                return step_msg, "add_on_service"
 
         # Save thread
         if thread:
@@ -479,10 +454,7 @@ async def AddONServices(
             thread.previous_step = step["step_id"]
             await thread.save()
 
-        if step["step_id"] == "5":
-            return llm_json.get("bot_response"), "add_on_service"
-        else:
-            return llm_json.get("bot_response"), None
+        return llm_json.get("bot_response"), None
     else:
         # stay on same step
         if thread and step["step_id"] == "1":

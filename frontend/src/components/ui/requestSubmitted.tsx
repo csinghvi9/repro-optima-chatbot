@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 type RequestSubmittedProps = {
   setSubmittedForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,114 +19,56 @@ export default function RequestSubmitted({
   }, []);
 
   return (
-    // <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-    //     <div className="relative bg-white shadow-lg border border-gray-300
-    //           w-[90%] md:w-[50%] lg:w-[30%] h-[80%] md:h-[75%] lg:h-[75%] rounded-2xl overflow-hidden
-    //           flex flex-col items-center ">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
+      <div className="relative bg-white shadow-2xl w-full max-w-sm rounded-3xl overflow-hidden flex flex-col items-center">
+        {/* Close button */}
+        <button
+          onClick={() => setSubmittedForm(false)}
+          className="absolute right-4 top-4 z-20 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
 
-    //         {/* SVG Background (absolute, centered, responsive) */}
-    //         {/* <div className="absolute
-    //             w-full h-[30%] pointer-events-none">
-    //             <img
-    //                 src="./ellipse.svg"
-    //                 alt="background ellipse"
-    //                 className="w-full h-auto"
-    //             />
-    //         </div> */}
-
-    //         {/* Foreground content */}
-    //         <div className="relative flex flex-col items-center text-center h-[50%] w-full py-10 ">
-    //             {/* Ellipse background */}
-    //             <button
-    //                 onClick={() => setSubmittedForm(false)}
-    //                 className="absolute right-5 top-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-    //             >
-    //                 <img src="/close_cross.svg" alt="close" className="w-5 h-5" />
-    //             </button>
-    //             <img
-    //                 src="/ellipse.svg"
-    //                 alt="ellipse background"
-    //                 className="absolute top-0 left-1/2 -translate-x-1/2 w-[140%] md:w-[120%] lg:w-[100%] h-full pointer-events-none"
-    //             />
-
-    //             {/* Foreground content */}
-    //             <div className="relative  flex flex-col items-center text-center md:px-6">
-
-    //                 <div className=" w-[30%] md:w-[25%] lg:w-[30%] aspect-square rounded-full bg-white border border-[#4DBB3E] grid place-items-center">
-    //                     <div className="w-[60%] aspect-square rounded-full bg-[#72CC66] grid place-items-center">
-    //                         <img src="/right.svg" className="w-[60%] h-[60%]" />
-    //                     </div>
-    //                 </div>
-
-    //                 <h2 className=" mt-2 sm:mt-4  text-[20px] sm:text-[28px] w-[70%] md:w-[80%] lg:w-[70%] font-indira_second_font font-bold text-indira_text">
-    //                     REQUEST SUBMITTED
-    //                 </h2>
-    //             </div>
-
-    //         </div>
-    //         <div className="relative flex flex-col items-center text-center h-[50%] w-full ">
-    //             <p className="mt-3 text-indira_hover_text text-sm md:text-base w-[70%] font-indira_font">
-    //                 Your request is registered with <br />
-    //                 <span className="font-semibold text-indira_text text-xs md:text-sm">Reference number : {response}</span>
-    //             </p>
-
-    //             <p className="mt-2 text-indira_hover_text text:sm md:text-base w-[80%] font-indira_font">
-    //                 Thanks for sharing your details, someone from our team will contact you shortly
-    //             </p>
-
-    //             {/* Button */}
-    //             <button className=" mt-4 md:mt-6 md:px-8 md:py-2 text-sm md:text-[16px] text-white font-semibold rounded-[999px]
-    //                bg-gradient-to-r from-indira_light_red to-indira_dark_red w-[70%] h-[15%] font-indira_font cursor-pointer"
-    //                onClick={() => setSubmittedForm(false)}>
-    //             Got it
-    //             </button>
-    //         </div>
-    //     </div>
-    // </div>
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div
-        className="relative bg-white shadow-lg border border-gray-300 
-                  w-[90%]  md:w-[50%] lg:w-[30%] rounded-2xl overflow-hidden 
-                  flex flex-col items-center "
-      >
-        <div className="relative w-full   text-center overflow-hidden rounded-xl shadow-md [background:linear-gradient(135deg,#F5FFB4_0%,#BBEFFF_100%)] [clip-path:ellipse(110%_80%_at_50%_10%)] pl-10 pr-10 pb-10 pt-5">
-          <button
-            onClick={() => setSubmittedForm(false)}
-            className="absolute right-5 top-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-          >
-            <img src="/close_cross.svg" alt="close" className="w-5 h-5" />
-          </button>
-          <div className="relative z-10 flex flex-col items-center pt-6">
-            <div className=" w-[20%] md:w-[30%] md:mt-3 lg:w-[20%] lg:mt-1   aspect-square rounded-full bg-white border border-[#4DBB3E] grid place-items-center">
-              <div className="w-[60%] aspect-square rounded-full bg-[#72CC66] grid place-items-center">
-                <img src="/right.svg" className="w-[60%] h-[60%]" />
-              </div>
+        {/* Top gradient section */}
+        <div className="w-full bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 pt-10 pb-8 px-6 flex flex-col items-center">
+          {/* Animated checkmark */}
+          <div className="w-20 h-20 rounded-full bg-white shadow-lg flex items-center justify-center mb-5">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
             </div>
-            <h2 className=" mt-2 sm:mt-4  text-[20px] sm:text-[28px] w-[70%]  font-indira_second_font font-bold text-indira_text">
-              REQUEST SUBMITTED
-            </h2>
           </div>
-        </div>
-        <div className="relative flex flex-col items-center text-center  w-full pb-5">
-          <p className="mt-3 text-indira_hover_text text-sm md:text-base w-[70%] font-indira_font">
-            Your request is registered with <br />
-            <span className="font-semibold text-indira_text text-xs md:text-sm">
-              Reference number : {response}
-            </span>
-          </p>
 
-          <p className="mt-2 text-indira_hover_text text:sm md:text-base w-[80%] font-indira_font">
-            Thanks for sharing your details, someone from our team will contact
-            you shortly
+          <h2 className="text-xl font-bold text-gray-800 tracking-tight">
+            Thank You!
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Your request has been submitted
+          </p>
+        </div>
+
+        {/* Content section */}
+        <div className="px-6 py-6 flex flex-col items-center w-full">
+          {/* Reference number card */}
+          <div className="w-full bg-gray-50 rounded-xl px-4 py-3 flex items-center justify-between mb-4">
+            <span className="text-xs text-gray-500 font-medium">Reference No.</span>
+            <span className="text-sm font-bold text-gray-800 tracking-wide">{response}</span>
+          </div>
+
+          <p className="text-sm text-gray-500 text-center leading-relaxed mb-6">
+            Our team will review your details and get in touch with you shortly.
           </p>
 
           {/* Button */}
           <button
-            className=" mt-4 md:mt-6 md:px-8 md:py-2 text-sm md:text-[16px] text-white font-semibold rounded-[999px] 
-                       bg-gradient-to-r from-indira_light_red to-indira_dark_red w-[70%]  font-indira_font cursor-pointer"
+            className="w-full py-3 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-[#F04F5F] to-[#CE3149] hover:opacity-90 transition-opacity cursor-pointer"
             onClick={() => setSubmittedForm(false)}
           >
-            Got it
+            Done
           </button>
         </div>
       </div>

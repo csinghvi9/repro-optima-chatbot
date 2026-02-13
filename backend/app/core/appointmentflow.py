@@ -1,7 +1,6 @@
 from app.utils.llm_utils import ask_openai_validation_assistant
 from app.models.threads import Thread
 from app.models.user_info import User_Info, AppointmentStatus
-from app.core.ivf_centers import find_nearest_by_postal, find_pincode_by_city_name
 from bson import ObjectId
 import json
 import re
@@ -10,6 +9,7 @@ from app.core.existingUser import step_check
 
 import ast
 from app.core.format_check import validate_answer
+from app.core.findHospital import CLINIC_CENTER
 
 
 async def appointment_flow(
@@ -30,7 +30,13 @@ async def appointment_flow(
             },
             "2": {
                 "step_id": "2",
-                "message": "Thanks. Now please mention your preferred pin code or city name to continue with the booking",
+                "message": [
+                    {
+                        "first_text": "Thank you for your query.",
+                        "second_text": "Our representative will call you shortly",
+                        "third_text": "For any query you can call us on +6332-256-2433",
+                    }
+                ],
                 "expected_input": "name of the person or nick name of the person and can be any name in any language like (miqat,ekal,ellis etc) and a valid name not like abc xyz",
                 "valid_condition": r"^[A-Za-z\s]{2,50}$",
                 "action": None,
@@ -39,7 +45,7 @@ async def appointment_flow(
                     "We cannot continue with the booking without your name. Please enter your name to proceed",
                     "You can still explore information without giving your name. Would you like to know about topics below",
                 ],
-                "next_step": "5",
+                "next_step": "6",
             },
             "5": {
                 "step_id": "5",
@@ -47,7 +53,7 @@ async def appointment_flow(
                     {
                         "first_text": "Thank you for your query.",
                         "second_text": "Our representative will call you shortly",
-                        "third_text": "For any query you can call us on 18003092323",
+                        "third_text": "For any query you can call us on +6332-256-2433",
                     }
                 ],
                 "expected_input": "pincode",
@@ -68,7 +74,7 @@ async def appointment_flow(
                     {
                         "first_text": "To cancel or reschedule your appointment, please contact our call center between 9 AM and 6 PM.",
                         "second_text": "CUSTOMER CARE NUMBER",
-                        "phone_number": "18003092323",
+                        "phone_number": "+6332-256-2433",
                     },
                     "Hope this helps! You can come back anytime to explore  or get more info",
                 ],
@@ -97,7 +103,7 @@ async def appointment_flow(
             {
                 "first_text": "Thank you for booking an appointment!",
                 "second_text": "Our representative will call you shortly",
-                "third_text": "For any query you can call us on 18003092323",
+                "third_text": "For any query you can call us on +6332-256-2433",
             }
         ]
         return booked_message, "booked"
@@ -284,18 +290,47 @@ Rules:
     if llm_json.get("status") == "VALID":
         next_step = step["next_step"]
         if step["step_id"] == "2":
+            # Save name, set hardcoded clinic, and mark as BOOKED directly
             user = await User_Info.find_one(User_Info.thread_id == thread_id)
+            clinic_data = [CLINIC_CENTER]
             if user:
                 user.name = user_message
-                user.appointment_status = AppointmentStatus.IN_PROCESS
+                user.preffered_center = clinic_data
+                user.appointment_status = AppointmentStatus.BOOKED
                 await user.save()
             else:
                 user_info = User_Info(
                     name=user_message,
                     thread_id=thread_id,
-                    appointment_status=AppointmentStatus.IN_PROCESS,
+                    preffered_center=clinic_data,
+                    appointment_status=AppointmentStatus.BOOKED,
                 )
                 await user_info.insert()
+
+            # Save thread state
+            if thread:
+                thread.flow_id = flow_id
+                thread.step_id = next_step
+                thread.step_count = 1
+                thread.previous_flow = thread.flow_id
+                thread.previous_step = step["step_id"]
+                await thread.save()
+
+            # Return clinic centers list (same as Find Hospital) then booked message
+            if language == "English":
+                return [clinic_data, step["message"]], "booked_with_centers"
+            else:
+                prompt = f"Translate the following into {language}. Return as valid JSON in the same structure. Only translate string values, not keys or numbers.\n{step['message']}\nOutput: valid JSON list"
+                llm_answer = await ask_openai_validation_assistant(prompt)
+                try:
+                    llm_translated = json.loads(llm_answer)
+                except:
+                    try:
+                        llm_translated = ast.literal_eval(llm_answer)
+                    except:
+                        llm_translated = step["message"]
+                return [clinic_data, llm_translated], "booked_with_centers"
+
         if step["step_id"] == "5":
             user = await User_Info.find_one(User_Info.thread_id == thread_id)
             user.appointment_status = AppointmentStatus.BOOKED

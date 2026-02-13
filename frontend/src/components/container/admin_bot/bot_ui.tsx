@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import BotStructure from "@/components/ui/bot_structure";
 import HelloMessage from "@/components/ui/hello_message";
 import CentersList from "@/components/ui/centersList";
-import IVFCalculateMessageBox from "@/components/ui/ivfCalculateMessage";
 import AppointmentBookedMessage from "@/components/ui/appointmentBooked";
 import LifestyleAndPreparationsProps from "@/components/ui/lifestyleAndPreparations";
 import BookAppointmentMessageBox from "@/components/ui/book_appointment_button";
@@ -14,7 +13,6 @@ import CostAndPackageBox from "@/components/ui/costAndPackage";
 import IVFQuestionBox from "@/components/ui/ivfQuestion";
 import AddOnServiceBox from "@/components/ui/addServiceBox";
 import FeedbackBox from "@/components/ui/feedbackBox";
-import MessageVideoCarousels from "@/components/ui/videoMessage";
 import LanguageSelection from "@/components/ui/languageSelection";
 import LanguageChange from "@/components/ui/languageChange";
 import FAQ from "@/components/ui/faqResponse";
@@ -34,7 +32,6 @@ type Message = {
   role: "bot" | "user";
   content: any;
   contentType?: string;
-  video_url?: any;
 };
 
 type Thread = {
@@ -60,7 +57,6 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
   const messages = thread?.messages ?? [];
   const newThreadID = thread?._id ?? "";
   const selectedLang = thread?.language ?? "English";
-  const [videoURLMessage, isvideoURLMessage] = useState(false);
   const handleLanguageSelect = async (lang: string) => {
   };
   return (
@@ -101,8 +97,6 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
                     </div>
                   ) : msg.contentType === "greetings" ? (
                     <HelloMessage msg={msg.content} />
-                  ) : msg.contentType === "video_url" ? (
-                    <MessageVideoCarousels message={msg.content} />
                   ) : msg.contentType === "add_on_service" ? (
                     <div className="flex items-end gap-2 max-w-[95%]">
                       {/* Bot icon */}
@@ -130,10 +124,7 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
                   ) : (
                     <div className="flex items-end gap-2 max-w-[80%]">
                       {!messages[idx + 1] ||
-                      messages[idx + 1].role !== "bot" ||
-                      (messages[idx + 1] &&
-                        messages[idx + 1].contentType === "video_url" &&
-                        messages[idx].role === "bot") ? (
+                      messages[idx + 1].role !== "bot" ? (
                         <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
                           <BotAvatar />
                         </div>
@@ -156,10 +147,9 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
                             "Lifestyle_and_Preparations" ? (
                             <LifestyleAndPreparationsProps msg={msg.content} />
                           ) : msg.contentType === "ivf_calculate" ? (
-                            <IVFCalculateMessageBox
-                              msg={msg.content}
-                              newThreadID={newThreadID}
-                            />
+                            <div className="bg-white text-indira_text px-3 py-2 rounded-tl-[10px] rounded-tr-[10px] rounded-br-[10px] rounded-bl-[4px] text-xs max-w-[75%] whitespace-pre-line">
+                              {msg.content}
+                            </div>
                           ) : msg.contentType === "book_appointment" ? (
                             <BookAppointmentMessageBox
                               msg={msg.content}

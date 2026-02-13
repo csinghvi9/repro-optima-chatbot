@@ -8,7 +8,7 @@ async def on_validation_failure(language):
         llm_answer = {
             "first_text": "For more specific information, please connect with our call center between 9 AM and 6 PM.",
             "second_text": "CUSTOMER CARE NUMBER",
-            "phone_number": "18003092323",
+            "phone_number": "+6332-256-2433",
         }
     else:
         prompt = f"""You are a translation assistant.
@@ -22,7 +22,7 @@ async def on_validation_failure(language):
             Base format (keys must remain unchanged):
             {{"first_text": "For more specific information, please connect with our call center between 9 AM and 6 PM.",
               "second_text": "CUSTOMER CARE NUMBER",
-              "phone_number": "18003092323"}}"""
+              "phone_number": "+6332-256-2433"}}"""
         llm_answer = await ask_openai_validation_assistant(prompt)
         try:
             llm_answer = json.loads(llm_answer)
@@ -33,7 +33,7 @@ async def on_validation_failure(language):
                 llm_answer = {
                     "first_text": "For more specific information, please connect with our call center between 9 AM and 6 PM.",
                     "second_text": "CUSTOMER CARE NUMBER",
-                    "phone_number": "18003092323",
+                    "phone_number": "+6332-256-2433",
                 }
     return False, llm_answer
 

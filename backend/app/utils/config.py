@@ -42,25 +42,9 @@ class Settings(BaseSettings):
     MONGO_TLS_CERT_FILE: str  # Path to the client certificate file (optional)
     MONGO_TLS_ALLOW_INVALID_HOSTNAMES: bool = True
 
-    S3_VIDEO_BUCKET: str
-    DOCTOR_TESTIMONIAL_VIDEOKEY: list
-    PATIENT_TESTIMONIAL_VIDEOKEY: list
-    PATIENT_TESTIMONIAL_THUMBNAIL: list
-    DOCTOR_TESTIMONIAL_THUMBNAIL: list
-    SUCCESS_RATE_VIDEOKEY: list
-    SUCCESS_RATE_THUMBNAIL: list
     ADMIN_EMAIL_ID: str
     ADMIN_EMAIL_TO: str
     MAIL_PASSWORD: str
-    IVF_COST_VIDEOKEY: list
-    IVF_COST_THUMBNAIL: list
-    DOCTOR_HEADING: list
-    PATIENT_HEADING: list
-    SUCCESS_HEADING: list
-    COST_HEADING: list
-    IVF_INFORMATION_HEADING: list
-    IVF_INFORMATION_THUMBNAIL: list
-    IVF_INFORMATION_VIDEOKEY: list
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 

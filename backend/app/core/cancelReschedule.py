@@ -50,7 +50,7 @@ async def cancelRescheduleFlow(thread_id: str, language: str, user_message: str)
         {
             "first_text": "To cancel your appointment, please contact our call center between 9 AM and 6 PM.",
             "second_text": "CUSTOMER CARE NUMBER",
-            "phone_number": "18003092323",
+            "phone_number": "+6332-256-2433",
         },
         "Hope this helps! You can come back anytime to explore  or get more info",
     ]
@@ -58,7 +58,7 @@ async def cancelRescheduleFlow(thread_id: str, language: str, user_message: str)
         {
             "first_text": "To reschedule your appointment, please contact our call center between 9 AM and 6 PM.",
             "second_text": "CUSTOMER CARE NUMBER",
-            "phone_number": "18003092323",
+            "phone_number": "+6332-256-2433",
         },
         "Hope this helps! You can come back anytime to explore  or get more info",
     ]

@@ -13,7 +13,6 @@ type Message = {
   type: "bot" | "user";
   content: any;
   contentType?:string;
-  video_url?:any;
 };
 
 type BotStructureProps = {
@@ -26,7 +25,6 @@ type BotStructureProps = {
   setTyping: React.Dispatch<React.SetStateAction<boolean>>;
   setshowoptions: React.Dispatch<React.SetStateAction<boolean>>;
   setThreadID: React.Dispatch<React.SetStateAction<any>>;
-  isvideoURLMessage: React.Dispatch<React.SetStateAction<boolean>>;
   isunderdevelopementsection: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   translatedOptions: string[];
@@ -70,7 +68,6 @@ export default function BotStructureNew({
   setTyping,
   setshowoptions,
   setThreadID,
-  isvideoURLMessage,
   isunderdevelopementsection,
   setSelectedOption,
   translatedOptions,
@@ -156,79 +153,10 @@ export default function BotStructureNew({
     if (!isConnected) return;
 
     let active = true;
-    isvideoURLMessage(false);
     const handleMessage = (event: MessageEvent) => {
       if (!active) return;
       const data = JSON.parse(event.data);
-      if (data.video_url && data.video_url.length > 0) {
-        // 1️⃣ Add text message
-        if (data.contentType !== "video_url") {
-          setMessages((prev) => {
-            if (prev.length === 0) {
-              return [
-                ...prev,
-                {
-                  type: "bot" as const,
-                  content: data.text,
-                  contentType: data.contentType,
-                  video_url: data.video_url,
-                },
-              ];
-            }
-
-            const lastMessage = prev[prev.length - 1];
-            const newContent = data.text;
-
-            const getHeading = (val: any) => {
-              if (typeof val === "object" && val !== null && "heading" in val) {
-                return val.heading;
-              }
-              return val;
-            };
-
-            if (
-              lastMessage.type === "bot" &&
-              getHeading(lastMessage.content) === getHeading(newContent)
-            ) {
-              return prev; // skip if heading same
-            }
-
-            return [
-              ...prev,
-              {
-                type: "bot" as const,
-                content: newContent,
-                contentType: data.contentType,
-                video_url: data.video_url,
-              },
-            ];
-          });
-        }
-        // 2️⃣ Add video message separately
-        setMessages((prev) => [
-          ...prev,
-          {
-            type: "bot" as const,
-            content: data.video_url,
-            contentType: "video_url",
-            video_url: data.video_url,
-          },
-        ]);
-
-        setTyping(false);
-      } else {
-        // text only
-        setMessages((prev) => [
-          ...prev,
-          {
-            type: "bot" as const,
-            content: data.text,
-            contentType: data.contentType,
-          },
-        ]);
-        setTyping(false);
-      }
-      if (data.text && !data.video_url) {
+      if (data.text) {
         setMessages((prev) => {
           if (prev.length === 0) {
             return [
@@ -237,7 +165,6 @@ export default function BotStructureNew({
                 type: "bot" as const,
                 content: data.text,
                 contentType: data.contentType,
-                video_url: data.video_url,
               },
             ];
           }
@@ -256,7 +183,7 @@ export default function BotStructureNew({
             lastMessage.type === "bot" &&
             getHeading(lastMessage.content) === getHeading(newContent)
           ) {
-            return prev; // ✅ skip agar heading same hai
+            return prev; // skip if heading same
           }
 
           return [
@@ -265,7 +192,6 @@ export default function BotStructureNew({
               type: "bot" as const,
               content: newContent,
               contentType: data.contentType,
-              video_url: data.video_url,
             },
           ];
         });
@@ -597,35 +523,32 @@ export default function BotStructureNew({
           />
         </div>
         {isOpen && (
-          <div className="absolute flex flex-col top-[10%] h-[30%]  md:top-[12%] right-[5%] w-[60%] md:w-[70%] md:h-[35%] bg-white border border-indira_hello_border rounded-md shadow-md z-50 gap-2">
-            <div>
-            <p className="px-2 py-2 font-semibold  font-indira_font leading-[150%] tracking-[0] text-[12px] text-indira_text ">
+          <div className="absolute top-[52px] right-3 bg-white border border-indira_hello_border rounded-xl shadow-lg z-50 px-3 py-3">
+            <p className="font-semibold font-indira_font text-[12px] text-indira_text mb-2">
               Change Language
             </p>
-            </div>
-            <div className="w-[90%] h-[80%] flex items-start justify-center ml-4 bg-white rounded-[10px]  overflow-y-auto customScrollbar">
-              <div className="flex flex-wrap gap-2 p-2">
-                {[
-                  "English",
-                  "Русский",
-                ].map((lang, index) => (
-                  <div
-                    key={index}
-                    onClick={() => {
-                      setSelectedLang(lang);
-                      handleChangeLanguage(newThreadID, lang); // now calling parent's handler
-                      setIsOpen(false);
-                    }}
-                    className={`px-3 py-1 rounded-full text-sm cursor-pointer text-[12px] text-indira_dark_red border border-red-200 text-center ${
-                      lang === selectedLang
-                        ? "bg-gradient-to-br from-indira_light_red to-indira_dark_red text-white"
-                        : "bg-red-50"
-                    }`}
-                  >
-                    {lang}
-                  </div>
-                ))}
-              </div>
+            <div className="flex flex-row gap-2">
+              {[
+                { label: "English", flag: "\uD83C\uDDEC\uD83C\uDDE7" },
+                { label: "\u0420\u0443\u0441\u0441\u043A\u0438\u0439", flag: "\uD83C\uDDF7\uD83C\uDDFA" },
+              ].map((lang, index) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setSelectedLang(lang.label);
+                    handleChangeLanguage(newThreadID, lang.label);
+                    setIsOpen(false);
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] cursor-pointer transition-all ${
+                    lang.label === selectedLang
+                      ? "bg-gradient-to-br from-indira_light_red to-indira_dark_red text-white shadow-sm"
+                      : "bg-red-50 text-indira_dark_red border border-red-200 hover:bg-red-100"
+                  }`}
+                >
+                  <span className="text-sm">{lang.flag}</span>
+                  {lang.label}
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -642,7 +565,6 @@ export default function BotStructureNew({
                 className="whitespace-nowrap cursor-pointer border border-indira_dark_red text-indira_text font-indira_font text-xs px-2 py-2 rounded-full hover:text-indira_hover_text transition flex-shrink-0"
                 onClick={() => {
                   setSelectedOption(opt);
-                  isvideoURLMessage(false);
                 }}
               >
                 {opt}

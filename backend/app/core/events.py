@@ -7,7 +7,6 @@ from app.utils.config import ENV_PROJECT
 # from app.modules.async_redis_consumer import aredis, start_redis_consumer
 import asyncio
 from typing import Callable
-from app.core.kbSetUP import KBSetup
 
 # import certifi
 from app.models.threads import Thread
@@ -17,6 +16,7 @@ from app.models.user_info import User_Info
 from app.models.otp_verification import OtpVerification
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.database import init_db
+from app.core.kbSetUP import KBSetup
 
 listen_task = None
 

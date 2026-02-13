@@ -144,9 +144,22 @@ const ChatbotWidget: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/repro.png')" }}
+      className="min-h-screen w-full relative overflow-hidden bg-gradient-to-br from-[#FFF5F6] via-[#FFEEF0] to-[#FFF8F0]"
     >
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-[#F04F5F]/5 blur-3xl" />
+        <div className="absolute -bottom-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-[#CE3149]/5 blur-3xl" />
+        <div className="absolute top-[40%] left-[30%] w-[30%] h-[30%] rounded-full bg-[#D4A03C]/5 blur-2xl" />
+      </div>
+      {/* Centered logo */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+        <img
+          src="/Repro Logo.png"
+          alt="Repro Optima"
+          className="w-[180px] md:w-[260px] lg:w-[320px] drop-shadow-sm"
+        />
+      </div>
       {/* Chatbot Widget Popup */}
       <AnimatePresence>
         {newThreadID && (

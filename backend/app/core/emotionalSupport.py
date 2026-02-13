@@ -9,8 +9,7 @@ from app.core.format_check import validate_answer
 async def EmotionalSupport(user_message, language: str, thread_id: str):
     # Explicitly keep messages as a list of separate strings
     messages = [
-        "We understand this may be difficult for you. We just want you to know that our team is with you, every step of the way. Please feel free to reach out to us anytime on - 18003092323.",
-        "Or reach out to us on WhatsApp.",
+        "We understand this may be difficult for you. We just want you to know that our team is with you, every step of the way. Please feel free to reach out to us anytime on - +6332-256-2433.",
         "Hope this was helpful. Let me know if you need more info",
     ]
 

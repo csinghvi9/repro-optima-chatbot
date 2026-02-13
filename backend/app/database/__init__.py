@@ -43,7 +43,6 @@ from app.models.user_info import User_Info
 from app.models.ivf_centers import IVF_Center
 from app.models.otp_verification import OtpVerification
 from app.models.loan_model import Loan_User
-from app.models.videos import Video
 
 # Global DB client and instance
 db_client: AsyncIOMotorClient = None
@@ -83,8 +82,7 @@ async def init_db():
                 User_Info,
                 IVF_Center,
                 OtpVerification,
-                Loan_User,
-                Video
+                Loan_User
             ]
         )
 

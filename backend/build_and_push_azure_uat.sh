@@ -2,7 +2,7 @@
 
 # Set these values
 ACR_NAME="iivfaiacr01"                       # ACR name (without .azurecr.io)
-IMAGE_NAME="uat-backend"         # Your image name
+IMAGE_NAME="meddilink-dev-backend"         # Your image name
 IMAGE_TAG="latest"                        # Tag (can be 'latest' or a version number like v1.0.0)
 
 # Build full registry URL

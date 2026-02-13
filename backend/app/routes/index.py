@@ -7,7 +7,6 @@ from app.routes import (
     userInfoRoute,
     loan_route,
     admin_user_route,
-    video_route,
 )
 
 # The main router for the application
@@ -25,4 +24,3 @@ router.include_router(loan_route.router, prefix="/loan_user", tags=["Loan User"]
 router.include_router(
     admin_user_route.router, prefix="/admin_auth", tags=["Admin Auth"]
 )
-router.include_router(video_route.router, prefix="/video", tags=["Video"])

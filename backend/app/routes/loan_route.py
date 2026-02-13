@@ -3,7 +3,6 @@ from app.schemas.loan_schemas import LoanUserInformation
 from fastapi import HTTPException
 from app.auth.auth import get_current_user
 from app.models.loan_model import Loan_User
-from app.core.email_send import send_approval_email
 from app.cruds.loan_cruds import generate_reference_number
 
 
@@ -35,8 +34,6 @@ async def insert_loan_user_info(
             )
 
             await loan_user.insert()
-            if loan_user.email_id:
-                await send_approval_email(loan_user, thread_id, "12345")
             return {
                 "status_code": 200,
                 "message": "User information inserted successfully",

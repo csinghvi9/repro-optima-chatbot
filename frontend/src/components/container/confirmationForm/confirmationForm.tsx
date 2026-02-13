@@ -223,7 +223,7 @@ export default function ConfirmationForm({
             <span className="text-[16px] text-[#717272]">
               I hereby declare that I have read and agreed to the{" "}
               <a
-                href="https://www.indiraivf.com/privacy-policy"
+                href="https://meddilink.com/privacy-policy"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 underline"
@@ -232,7 +232,7 @@ export default function ConfirmationForm({
               </a>{" "}
               and{" "}
               <a
-                href="https://www.indiraivf.com/terms-and-conditions"
+                href="https://meddilink.com/terms-and-conditions"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 underline"

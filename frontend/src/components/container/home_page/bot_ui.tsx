@@ -11,7 +11,6 @@ import EmotionalSupport from "@/components/container/emotionalSupport/emotionalS
 import CalendarMessage from "@/components/ui/calendar";
 import TimeSlotsMessage from "@/components/ui/timeSlots";
 import CentersList from "@/components/ui/centersList";
-import IVFCalculateMessageBox from "@/components/ui/ivfCalculateMessage";
 import AppointmentBookedMessage from "@/components/ui/appointmentBooked";
 import LifestyleAndPreparationsProps from "@/components/ui/lifestyleAndPreparations";
 import BookAppointmentMessageBox from "@/components/ui/book_appointment_button";
@@ -30,7 +29,6 @@ import EMIFacilities from "@/components/container/emiFacilities/emiFacilities";
 import IVFQuestionBox from "@/components/ui/ivfQuestion";
 import AddOnServiceBox from "@/components/ui/addServiceBox";
 import FeedbackBox from "@/components/ui/feedbackBox";
-import MessageVideoCarousels from "@/components/ui/videoMessage";
 import LanguageChange from "@/components/ui/languageChange";
 import { labelMap } from "@/components/constants/labelMap";
 import ServicesOffered from "@/components/container/servicesOffered/servicesOffered";
@@ -63,7 +61,6 @@ type Message = {
   type: "bot" | "user";
   content: any;
   contentType?: string;
-  video_url?: any;
 };
 
 export default function Chatbot({
@@ -79,7 +76,6 @@ export default function Chatbot({
   );
   const [showoptions, setshowoptions] = useState(true);
   const [isfeedback, setisfeedback] = useState(false);
-  const [videoURLMessage, isvideoURLMessage] = useState(false);
   const [typing, setTyping] = useState(true);
   const [underdevelopementsection, isunderdevelopementsection] = useState(true);
   const [initialOptions, setinitialOptions] = useState(true);
@@ -211,7 +207,6 @@ export default function Chatbot({
       setTyping={setTyping}
       setshowoptions={setshowoptions}
       setThreadID={setThreadID}
-      isvideoURLMessage={isvideoURLMessage}
       isunderdevelopementsection={isunderdevelopementsection}
       setSelectedOption={setSelectedOption}
       translatedOptions={translatedOptions}
@@ -242,8 +237,6 @@ export default function Chatbot({
                 </div>
               ) : msg.contentType === "greetings" ? (
                 <HelloMessage msg={msg.content} />
-              ) : msg.contentType === "video_url" ? (
-                <MessageVideoCarousels message={msg.content} />
               ) : msg.contentType === "add_on_service" ? (
                 <div className="flex items-end gap-2 max-w-[95%]">
                   {/* Bot icon */}
@@ -275,10 +268,7 @@ export default function Chatbot({
                     <BotAvatar />
                   </div> */}
                   {!messages[idx + 1] ||
-                  messages[idx + 1].type !== "bot" ||
-                  (messages[idx + 1] &&
-                    messages[idx + 1].contentType === "video_url" &&
-                    messages[idx].type === "bot") ? (
+                  messages[idx + 1].type !== "bot" ? (
                     <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
                       <BotAvatar />
                     </div>
@@ -332,11 +322,9 @@ export default function Chatbot({
                       ) : msg.contentType === "Lifestyle_and_Preparations" ? (
                         <LifestyleAndPreparationsProps msg={msg.content} />
                       ) : msg.contentType === "ivf_calculate" ? (
-                        <IVFCalculateMessageBox
-                          msg={msg.content}
-                          newThreadID={newThreadID}
-                          setTyping={setTyping}
-                        />
+                        <div className="bg-white text-indira_text px-3 py-2 rounded-tl-[10px] rounded-tr-[10px] rounded-br-[10px] rounded-bl-[4px] text-xs max-w-[75%] whitespace-pre-line">
+                          {msg.content}
+                        </div>
                       ) : msg.contentType === "book_appointment" ? (
                         <BookAppointmentMessageBox
                           msg={msg.content}

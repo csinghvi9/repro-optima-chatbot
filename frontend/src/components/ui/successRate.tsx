@@ -53,7 +53,7 @@ const SuccessRateMessage: React.FC<SuccessRateMessageProps> = ({ msg }) => {
             {/* Left card */}
             <div className="flex flex-col w-[50%] bg-[#fff9fb] border border-indira_divider rounded-[10px] ">
                 <img
-                    src="./iivf_logo.png"
+                    src="./Repro Logo.png"
                     alt="logo"
                     className="w-[70%] h-[20%] pl-4 pt-4"
                 />
