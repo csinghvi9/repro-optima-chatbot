@@ -33,6 +33,7 @@ const UnderstandingIVF: React.FC<UnderstandingIVFProps> = ({
     const messagesByLanguage: Record<string, string> = {
         English: "What is IVF?",
         Русский: "Что такое ЭКО?",
+        Filipino: "Ano ang IVF?",
     };
 
 

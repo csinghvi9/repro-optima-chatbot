@@ -33,6 +33,7 @@ const SuccessRate: React.FC<SuccessRateProps> = ({
   const messagesByLanguage: Record<string, string> = {
     English: "What is the success rate at IVF?",
     Русский: "Каков показатель успеха ЭКО?",
+    Filipino: "Ano ang tagumpay na rate ng IVF?",
   };
 
   const { createNewThread } = useThreads();

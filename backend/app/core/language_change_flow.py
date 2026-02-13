@@ -73,6 +73,7 @@ async def LanguageChange(
             "অসমীয়া",
             "ଓଡ଼ିଆ",
             "తెలుగు",
+            "Filipino",
         ]:
             if thread:
                 thread.language = user_message

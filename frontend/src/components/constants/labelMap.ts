@@ -23,4 +23,12 @@ export const labelMap:Record<string, string> = {
   "Пакеты ЭКО": "packages",
   "Предлагаемые услуги":"services_offered",
   "Что такое ЭКО": "understanding_ivf",
+
+  // Filipino
+  "Mag-book ng Libreng Konsultasyon": "book_consultation",
+  "Maghanap ng Klinika": "find_hospital",
+  "Mga Madalas Itanong": "frequently_asked_questions",
+  "Tagumpay na Rate": "success_rate",
+  "Pag-unawa sa IVF": "understanding_ivf",
+  "Mga Serbisyong Inaalok": "services_offered",
 };

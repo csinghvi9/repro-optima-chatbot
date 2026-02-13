@@ -35,6 +35,7 @@ const BookFreeConsultation: React.FC<BookFreeConsultationProps> = ({
   const messagesByLanguage: Record<string, string> = {
     English: "Book Free Consultation",
     Русский: "Записаться на бесплатную консультацию",
+    Filipino: "Mag-book ng Libreng Konsultasyon",
   };
 
   const { createNewThread } = useThreads();

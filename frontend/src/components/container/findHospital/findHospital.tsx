@@ -33,6 +33,7 @@ const FindHospital: React.FC<FindHospitalProps> = ({
     const messagesByLanguage: Record<string, string> = {
         English: "Find IVF Centers near me?",
         Русский: "Найти ближайшие центры ЭКО?",
+        Filipino: "Maghanap ng mga IVF Center malapit sa akin?",
     };
 
     const { createNewThread } = useThreads();

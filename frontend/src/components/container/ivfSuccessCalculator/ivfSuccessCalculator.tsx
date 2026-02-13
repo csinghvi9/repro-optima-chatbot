@@ -36,6 +36,7 @@ const IVFSuccessCalculator: React.FC<IVFSuccessCalculatorProps> = ({
   const messagesByLanguage: Record<string, string> = {
     English: "I want to know my chances for a successful IVF",
     Русский: "Я хочу узнать мои шансы на успешное ЭКО",
+    Filipino: "Gusto kong malaman ang aking tsansa para sa matagumpay na IVF",
   };
 
   // Prevent body scroll on small screens

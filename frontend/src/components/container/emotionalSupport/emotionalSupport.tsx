@@ -33,6 +33,7 @@ const EmotionalSupport: React.FC<EmotionalSupportProps> = ({
   const messagesByLanguage: Record<string, string> = {
     English: "I'm really nervous about the procedures",
     Русский: "Я очень переживаю по поводу процедур",
+    Filipino: "Kinakabahan ako tungkol sa mga proseso",
   };
 
   const { createNewThread } = useThreads();

@@ -33,6 +33,7 @@ const EMIFacilities: React.FC<EMIFacilitiesProps> = ({
     const messagesByLanguage: Record<string, string> = {
         English: "I would like to know more about the EMI facility offered by IVF.",
         Русский: "Я хотел бы узнать больше о рассрочке платежа в клинике ЭКО.",
+        Filipino: "Gusto kong malaman ang tungkol sa EMI facility ng IVF.",
     };
 
 

@@ -13,6 +13,7 @@ const LanguageSelection: React.FC<LanguageSelectionProps> = ({ onSelect, selecte
   const languages: { label: string; flag: string }[] = [
     { label: "English", flag: "🇬🇧" },
     { label: "Русский", flag: "🇷🇺" },
+    { label: "Filipino", flag: "🇵🇭" },
   ];
 
   const handleChangeLanguage = async (lang: string) => {

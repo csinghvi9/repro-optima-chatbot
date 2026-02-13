@@ -33,6 +33,7 @@ const FrequentlyAskedQuestion: React.FC<FrequentlyAskedQuestionProps> = ({
     const messagesByLanguage: Record<string, string> = {
         English: "What are the frequently asked questions?",
         Русский: "Какие вопросы задают чаще всего?",
+        Filipino: "Ano ang mga madalas itanong?",
     };
 
 

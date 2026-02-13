@@ -33,6 +33,7 @@ const ServicesOffered: React.FC<ServicesOfferedProps> = ({
     const messagesByLanguage: Record<string, string> = {
         English: "What services does IVF offer ?",
         Русский: "Какие услуги предлагает клиника ЭКО?",
+        Filipino: "Anong mga serbisyo ang inaalok ng IVF?",
     };
 
 

@@ -34,6 +34,7 @@ const IVFCostAndPackage: React.FC<IVFCostAndPackageProps> = ({
   const messagesByLanguage: Record<string, string> = {
     English: "How much does IVF cycle cost?",
     Русский: "Сколько стоит цикл ЭКО?",
+    Filipino: "Magkano ang isang cycle ng IVF?",
   };
 
   const { createNewThread } = useThreads();

@@ -23,4 +23,12 @@ export const translations:Record<string, string[]>  = {
       "Предлагаемые услуги",
       //"Пакеты ЭКО",
     ],
+    Filipino: [
+      "Mag-book ng Libreng Konsultasyon",
+      "Maghanap ng Klinika",
+      "Mga Madalas Itanong",
+      "Tagumpay na Rate",
+      "Pag-unawa sa IVF",
+      "Mga Serbisyong Inaalok",
+    ],
   };

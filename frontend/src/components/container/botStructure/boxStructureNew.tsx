@@ -531,6 +531,7 @@ export default function BotStructureNew({
               {[
                 { label: "English", flag: "\uD83C\uDDEC\uD83C\uDDE7" },
                 { label: "\u0420\u0443\u0441\u0441\u043A\u0438\u0439", flag: "\uD83C\uDDF7\uD83C\uDDFA" },
+                { label: "Filipino", flag: "\uD83C\uDDF5\uD83C\uDDED" },
               ].map((lang, index) => (
                 <div
                   key={index}
