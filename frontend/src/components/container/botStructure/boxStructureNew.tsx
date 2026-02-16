@@ -579,9 +579,8 @@ export default function BotStructureNew({
         <div className="flex items-center grow gap-2 bg-white p-2 rounded-lg border-1 border-indira_border">
           <input
             type="text"
-            className={`grow bg-white px-2.5 py-1  border-indira_border rounded-[6px]  font-normal font-indira_font text-indira_text inline-block ${
-              isIOSDevice ? "text-base" : "text-sm"
-            } placeholder:indira_input_label_text  focus:outline-none focus:ring-0 focus:border-indira_dark_red`}
+            className="grow bg-white px-2.5 py-1 border-indira_border rounded-[6px] font-normal font-indira_font text-indira_text inline-block text-base placeholder:indira_input_label_text focus:outline-none focus:ring-0 focus:border-indira_dark_red"
+            style={{ fontSize: "16px" }}
             placeholder={isListening ? "Listening..." : " Type your query here"}
             value={message}
             onChange={(e) => setMessage(e.target.value)}

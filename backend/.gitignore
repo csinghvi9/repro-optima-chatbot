@@ -4,8 +4,6 @@ __pycache__/
 *.pyo
 
 chroma_db/
-.lib/
-.build/lib/
 .venv/
 .env
 *.pem

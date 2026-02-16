@@ -38,3 +38,6 @@ dependencies = [
     "azure-identity>=1.25.1",
     "azure-keyvault-secrets>=4.10.0"
 ]
+
+[tool.setuptools.packages.find]
+include = ["app*"]

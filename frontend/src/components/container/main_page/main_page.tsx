@@ -12,7 +12,7 @@ const ChatIcon = () => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="none"
-    className="w-7 h-7"
+    className="w-10 h-10 md:w-9 md:h-9"
   >
     <path
       d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"
@@ -33,7 +33,7 @@ const CloseIcon = () => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="none"
-    className="w-6 h-6"
+    className="w-9 h-9 md:w-8 md:h-8"
   >
     <path
       d="M18 6L6 18M6 6l12 12"
@@ -54,8 +54,6 @@ const ChatbotWidget: React.FC = () => {
 
   const toggleChatbot = () => {
     if (isChatbotOpen) {
-      disconnectWebSocket();
-      setThreadID(undefined);
       setIsChatbotOpen(false);
       window.parent.postMessage({ type: "CHATBOT_CLOSE" }, "*");
     } else {
@@ -78,8 +76,9 @@ const ChatbotWidget: React.FC = () => {
     }
   };
 
+  // Prefetch guest token, WebSocket, and thread on page load so bot opens instantly
   useEffect(() => {
-    const fetchGuestToken = async () => {
+    const prefetch = async () => {
       try {
         setIsLoadingChatbot(true);
         let token = sessionStorage.getItem("guest_token");
@@ -103,16 +102,10 @@ const ChatbotWidget: React.FC = () => {
       }
     };
 
-    if (isChatbotOpen && !newThreadID && !isLoadingChatbot) {
-      fetchGuestToken();
+    if (!newThreadID && !isLoadingChatbot) {
+      prefetch();
     }
-  }, [
-    isChatbotOpen,
-    newThreadID,
-    isLoadingChatbot,
-    setUpWebSocket,
-    createNewThread,
-  ]);
+  }, []);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -140,37 +133,46 @@ const ChatbotWidget: React.FC = () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [isChatbotOpen, disconnectWebSocket, setUpWebSocket]);
 
-  const showTooltip = !isChatbotOpen && !isLoadingChatbot;
+  const showTooltip = !isChatbotOpen;
 
   return (
     <div
-      className="min-h-screen w-full relative overflow-hidden"
-      style={{
-        backgroundImage: "url('/clinic-bg.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
+      className="min-h-screen min-h-[100dvh] w-full relative overflow-hidden"
     >
+      {/* Mobile: pink gradient | Tablet+: background image */}
+      <div
+        className="absolute inset-0 md:hidden"
+        style={{ background: "linear-gradient(135deg, #f8d7da, #e8b4b8, #f5c6cb)" }}
+      />
+      <div
+        className="absolute inset-0 hidden md:block"
+        style={{
+          backgroundImage: "url('/Ivf Background.jpg')",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center 70%",
+          backgroundColor: "#e8b4b8",
+        }}
+      />
       {/* Semi-transparent overlay for readability */}
       <div className="absolute inset-0 bg-white/60 pointer-events-none" />
       {/* Centered logo */}
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
         <img
-          src="/Repro Logo.png"
+          src="/Repro Logo Bg Remove.png"
           alt="Repro Optima"
           className="w-[180px] md:w-[260px] lg:w-[320px] drop-shadow-sm"
         />
       </div>
       {/* Chatbot Widget Popup */}
       <AnimatePresence>
-        {newThreadID && (
+        {isChatbotOpen && newThreadID && (
           <motion.div
-            initial={{ scale: 0.5, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.5, opacity: 0, y: 20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed bottom-[88px] right-4 md:right-6 z-50 overflow-hidden rounded-2xl shadow-2xl
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.1, ease: "easeOut" }}
+            className="fixed bottom-[100px] right-4 md:right-6 z-50 overflow-hidden rounded-2xl shadow-2xl
               w-[calc(100vw-32px)] h-[calc(100vh-100px)]
               md:w-[400px] md:h-[600px]
               max-md:bottom-0 max-md:right-0 max-md:w-full max-md:h-full max-md:rounded-none"
@@ -185,7 +187,7 @@ const ChatbotWidget: React.FC = () => {
       </AnimatePresence>
 
       {/* Chatbot Toggle Button — hidden on mobile when chat is open (header has its own close button) */}
-      <div className={`fixed bottom-4 right-4 md:right-6 z-50 ${newThreadID ? "max-md:hidden" : ""}`}>
+      <div className={`fixed bottom-4 right-4 md:right-6 z-50 ${isChatbotOpen && newThreadID ? "max-md:hidden" : ""}`}>
         <AnimatePresence>
           {showTooltip && (
             <motion.div
@@ -194,12 +196,12 @@ const ChatbotWidget: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 6 }}
               transition={{ duration: 0.25 }}
-              className="absolute -top-10 right-0 flex flex-col items-end pointer-events-none"
+              className="absolute -top-12 right-0 flex flex-col items-end pointer-events-none"
             >
               <div className="px-3 py-1.5 rounded-lg text-indira_text text-xs font-indira_font whitespace-nowrap border border-indira_border bg-white shadow-sm">
                 Chat with us!
               </div>
-              <div className="mr-5 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-white" />
+              <div className="mr-8 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-white" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -207,9 +209,9 @@ const ChatbotWidget: React.FC = () => {
           onClick={toggleChatbot}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="w-14 h-14 rounded-full cursor-pointer flex items-center justify-center shadow-lg bg-gradient-to-br from-indira_light_red to-indira_dark_red hover:from-indira_hover_red hover:to-indira_hover_red transition-colors"
+          className="w-[88px] h-[88px] md:w-20 md:h-20 rounded-full cursor-pointer flex items-center justify-center shadow-lg bg-gradient-to-br from-indira_light_red to-indira_dark_red hover:from-indira_hover_red hover:to-indira_hover_red transition-colors"
         >
-          {newThreadID ? <CloseIcon /> : <ChatIcon />}
+          {isChatbotOpen ? <CloseIcon /> : <ChatIcon />}
         </motion.button>
       </div>
     </div>

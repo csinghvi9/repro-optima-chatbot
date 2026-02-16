@@ -22,6 +22,13 @@ body {
   font-family: 'Open Sans', 'Quicksand';
 }
 
+/* Prevent iOS Safari zoom on input focus */
+@supports (-webkit-touch-callout: none) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
 @theme {
   --color-indra_yellow: #fafee9;
   --color-indira_blue: #ecfbfc;
