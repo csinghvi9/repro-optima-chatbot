@@ -207,33 +207,20 @@ export default function BotStructureNew({
     };
   }, [ws]);
   const langCodeMap: Record<string, string> = {
-    English: "en-US", // English
-    Русский: "ru-RU", // Russian
+    English: "en-US",
+    Русский: "ru-RU",
+    Filipino: "fil-PH",
   };
   const handleMicClick = async () => {
     if (micStatus !== "listening") {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-
         const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
         const speechConfig = sdk.SpeechConfig.fromSubscription(
           process.env.NEXT_PUBLIC_AZURE_SPEECH_KEY!,
           process.env.NEXT_PUBLIC_AZURE_SPEECH_REGION!
         );
 
-        // ✅ Ensure valid BCP-47 code
-
-        let lang: string;
-
-        if (selectedLang){
-        lang = langCodeMap[selectedLang];
-        }
-        else{
-          lang= "en-IN";
-        }
-
+        const lang = (selectedLang && langCodeMap[selectedLang]) || "en-US";
         speechConfig.speechRecognitionLanguage = lang;
 
         const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
