@@ -110,6 +110,17 @@ async def appointment_flow(
     if (
         thread.step_id == "6"
     ):
+        # Check if user clicked on a center name (show address like Find Hospital)
+        if user_message and existing_user and existing_user.preffered_center:
+            for c in existing_user.preffered_center:
+                clinic_name = c["Clinic Name"].strip().lower()
+                user_input = user_message.strip().lower()
+                if (
+                    clinic_name == user_input
+                    or clinic_name.split("-")[-1].strip() == user_input
+                ):
+                    address_msg = c["Clinic Name"] + " - " + c["Address"]
+                    return [address_msg, "Hope this was helpful. Let me know if you need more info"], None
         message = "i want to reschedule my appointment"
         response, contentType = await cancelRescheduleFlow(thread_id, language, message)
         return response, contentType

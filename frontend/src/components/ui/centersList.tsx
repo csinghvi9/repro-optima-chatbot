@@ -115,9 +115,6 @@ const CentersList: React.FC<CentersListProps> = ({
             ))
           : /* If messages exist → Clickable list */
             centers.map((center, idx) => {
-              const lastMessage = messages[messages.length - 1];
-              const isCentersContent = lastMessage?.contentType === "centers";
-
               return (
                 <li
                   key={idx}
@@ -133,13 +130,8 @@ const CentersList: React.FC<CentersListProps> = ({
                     <div className="flex justify-between items-center w-[75%]">
                       <div className="w-[70%]">
                         <span
-                          className={`text-indira_dark_red font-semibold ${
-                            isCentersContent
-                              ? "cursor-pointer hover:underline"
-                              : "cursor-default"
-                          }`}
+                          className="text-indira_dark_red font-semibold cursor-pointer hover:underline"
                           onClick={() => {
-                            if (!isCentersContent) return;
                             onSelect?.(
                               center["Clinic Name"].split(" - ").pop()!
                             );
