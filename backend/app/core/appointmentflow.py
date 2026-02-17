@@ -52,12 +52,12 @@ async def appointment_flow(
                         "third_text": "For any query you can call us on +6332-256-2433",
                     }
                 ],
-                "expected_input": "phone number or mobile number of the user (7-15 digits, may start with + or 0)",
-                "valid_condition": r"^[\+]?[\d\-\s]{7,15}$",
+                "expected_input": "phone number or mobile number of the user (10-13 digits, may start with + or 0)",
+                "valid_condition": r"^[\+]?[\d\-\s]{10,13}$",
                 "action": None,
-                "other_text": "Sorry, that doesn't look like a valid phone number. Please enter your phone number",
+                "other_text": "Sorry, that doesn't look like a valid phone number. Please enter your phone number. It should contain 10–13 digits.",
                 "final_text": [
-                    "We cannot continue with the booking without your phone number. Please enter your phone number to proceed",
+                    "We cannot continue with the booking without your phone number. Please enter your phone number. It should contain 10–13 digits. to proceed",
                     "You can still explore information without giving your phone number. Would you like to know about topics below",
                 ],
                 "next_step": "6",
