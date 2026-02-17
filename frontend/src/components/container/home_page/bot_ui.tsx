@@ -293,6 +293,7 @@ export default function Chatbot({
                           newThreadID={newThreadID}
                           setTyping={setTyping}
                           messages={messages}
+                          selectedLang={selectedLang}
                         />
                       ) : msg.contentType === "calendar" ? (
                         <CalendarMessage

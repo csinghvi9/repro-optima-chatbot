@@ -9,7 +9,7 @@ from app.core.existingUser import step_check
 
 import ast
 from app.core.format_check import validate_answer
-from app.core.findHospital import CLINIC_CENTER
+from app.core.findHospital import CLINIC_CENTER, HELP_TEXT_TRANSLATIONS, ADDRESS_LABEL_TRANSLATIONS
 
 
 async def appointment_flow(
@@ -119,8 +119,10 @@ async def appointment_flow(
                     clinic_name == user_input
                     or clinic_name.split("-")[-1].strip() == user_input
                 ):
-                    address_msg = c["Clinic Name"] + " - " + c["Address"]
-                    return [address_msg, "Hope this was helpful. Let me know if you need more info"], None
+                    address_label = ADDRESS_LABEL_TRANSLATIONS.get(language, ADDRESS_LABEL_TRANSLATIONS["English"])
+                    help_text = HELP_TEXT_TRANSLATIONS.get(language, HELP_TEXT_TRANSLATIONS["English"])
+                    address_msg = c["Clinic Name"] + "\n" + address_label + ": " + c["Address"]
+                    return [address_msg, help_text], None
         message = "i want to reschedule my appointment"
         response, contentType = await cancelRescheduleFlow(thread_id, language, message)
         return response, contentType

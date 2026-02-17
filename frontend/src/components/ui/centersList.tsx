@@ -18,7 +18,26 @@ interface CentersListProps {
   newThreadID: string;
   setTyping?: React.Dispatch<React.SetStateAction<boolean>>;
   messages?: Message[];
+  selectedLang?: string;
 }
+
+const centersListTranslations: Record<string, { clinicLocation: string; mapHint: string; noCenters: string }> = {
+  English: {
+    clinicLocation: "Here is our clinic location:",
+    mapHint: "Use the map icon to view the location on Google Maps.",
+    noCenters: "No centers found.",
+  },
+  "Русский": {
+    clinicLocation: "Вот расположение нашей клиники:",
+    mapHint: "Используйте значок карты, чтобы увидеть расположение на Google Maps.",
+    noCenters: "Центры не найдены.",
+  },
+  Filipino: {
+    clinicLocation: "Narito ang lokasyon ng aming klinika:",
+    mapHint: "Gamitin ang icon ng mapa upang makita ang lokasyon sa Google Maps.",
+    noCenters: "Walang nahanap na sentro.",
+  },
+};
 
 const CentersList: React.FC<CentersListProps> = ({
   centers,
@@ -26,12 +45,14 @@ const CentersList: React.FC<CentersListProps> = ({
   newThreadID,
   setTyping,
   messages,
+  selectedLang,
 }) => {
+  const t = centersListTranslations[selectedLang || "English"] || centersListTranslations["English"];
 
   if (!centers || centers.length === 0) {
     return (
       <div className="bg-white text-indira_text px-3 py-2 rounded-lg text-xs max-w-[75%]">
-        No centers found.
+        {t.noCenters}
       </div>
     );
   }
@@ -70,7 +91,7 @@ const CentersList: React.FC<CentersListProps> = ({
   return (
     <div className="bg-white px-3 py-2 rounded-tl-[10px] rounded-tr-[10px] rounded-br-[10px] rounded-bl-[4px] text-xs max-w-[80%]">
       <p className="text-indira_text mb-2 text-xs">
-        Here is our clinic location:
+        {t.clinicLocation}
       </p>
 
       <ul className="space-y-2">
@@ -168,7 +189,7 @@ const CentersList: React.FC<CentersListProps> = ({
       </ul>
 
       <p className="text-xs text-indira_text mt-2">
-        Use the map icon to view the location on Google Maps.
+        {t.mapHint}
       </p>
 
     </div>

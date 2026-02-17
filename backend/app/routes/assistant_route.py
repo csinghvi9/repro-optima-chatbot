@@ -86,7 +86,11 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                     flow_id = data.get("subtype")
                     step_id = None
                 else:
-                    llm_flow_id = await flow_check(content, language)
+                    # Skip flow classifier if we're in a completed flow that handles center clicks
+                    if flow_id in ["book_appointment", "nearby_centers"] and step_id == "6":
+                        llm_flow_id = "None"
+                    else:
+                        llm_flow_id = await flow_check(content, language)
                     if llm_flow_id == "greetings" and thread.previous_flow in [
                         "book_appointment",
                         "ivf_steps",

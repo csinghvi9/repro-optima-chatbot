@@ -11,6 +11,18 @@ CLINIC_CENTER = {
     "url": "https://www.google.com/maps?q=10.31264174367693,123.89200466249612",
 }
 
+HELP_TEXT_TRANSLATIONS = {
+    "English": "Hope this was helpful. Let me know if you need more info",
+    "Русский": "Надеюсь, это было полезно. Дайте мне знать, если вам нужна дополнительная информация",
+    "Filipino": "Sana nakatulong ito. Ipaalam mo sa akin kung kailangan mo pa ng karagdagang impormasyon",
+}
+
+ADDRESS_LABEL_TRANSLATIONS = {
+    "English": "Address",
+    "Русский": "Адрес",
+    "Filipino": "Address",
+}
+
 
 async def FindHospital(
     thread_id: str, flow_id: str, step_id: str, language: str, user_message: str
@@ -76,7 +88,10 @@ async def FindHospital(
 
     # Step 2: Handle center selection
     if step["step_id"] == "2":
+        help_text = HELP_TEXT_TRANSLATIONS.get(language, HELP_TEXT_TRANSLATIONS["English"])
+        address_label = ADDRESS_LABEL_TRANSLATIONS.get(language, ADDRESS_LABEL_TRANSLATIONS["English"])
         user = await User_Info.find_one(User_Info.thread_id == thread_id)
+        response_msg = ["", help_text]
         if user and user.preffered_center:
             for c in user.preffered_center:
                 clinic_name = c["Clinic Name"].strip().lower()
@@ -89,7 +104,7 @@ async def FindHospital(
                     user.City = c["City"]
                     user.State = c["State"]
                     await user.save()
-                    step["message"][0] = c["Clinic Name"] + " - " + c["Address"]
+                    response_msg[0] = c["Clinic Name"] + "\n" + address_label + ": " + c["Address"]
 
         if thread:
             thread.flow_id = flow_id
@@ -98,4 +113,4 @@ async def FindHospital(
             thread.previous_step = step["step_id"]
             await thread.save()
 
-        return step["message"], "feedback"
+        return response_msg, "feedback"
