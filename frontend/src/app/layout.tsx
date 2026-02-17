@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "IVF Bot",
   description: "IVF Bot – your smart assistant for seamless IVF guidance, support, and care.",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/repro_logo.ico",
   },
 };
 
@@ -37,7 +37,7 @@ export default function RootLayout({
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"     
         />
         <title>IVF Bot</title>
-        <link rel="icon" href="/bot_logo.ico" />
+        <link rel="icon" href="/repro_logo.ico" />
       </head>
       <body>
         <WebSocketProvider>

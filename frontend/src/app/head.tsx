@@ -3,7 +3,7 @@ export default function Head() {
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       <title>IVF Bot</title>
-      <link rel="icon" href="/bot_logo.ico" />
+      <link rel="icon" href="/repro_logo.ico" />
     </>
   );
 }
