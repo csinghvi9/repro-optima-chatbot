@@ -165,19 +165,26 @@ async def ivfPackages(
             if language == "English":
                 return step["message"], "cost_and_package"
             else:
-                prompt = f"Yo have to just return {step['message']} in translated langauage-{language} Output:as valid Json translated in {language} translate the string in {language} but  do not translate the keys in dict and in same structure like the message which i have given"
-                llm_answer = await ask_openai_validation_assistant(prompt)
-                try:
-                    llm_json = json.loads(llm_answer)
-                except:
-                    llm_json = [llm_answer]
-                is_validated, answer = await validate_answer(
-                    llm_json, step["message"], language
-                )
-                if is_validated:
-                    return llm_json, "cost_and_package"
-                else:
-                    return answer, "out_of_context"
+                translated_msg = list(step["message"])
+                # Translate string elements for non-English languages
+                for i, item in enumerate(translated_msg):
+                    if isinstance(item, str) and item.strip():
+                        translated = await ask_openai_validation_assistant(
+                            f"Translate this sentence to {language}, output only the translated sentence: '{item}' output-string", max_tokens=150
+                        )
+                        if isinstance(translated, str) and translated.strip().lower() != "none":
+                            translated_msg[i] = translated
+                # Translate dict elements (packages)
+                for i, item in enumerate(translated_msg):
+                    if isinstance(item, dict):
+                        prompt = f"Translate only the string values in this JSON to {language}. Do NOT translate the keys. Return valid JSON in the same structure:\n{json.dumps(item)} output-string"
+                        llm_answer = await ask_openai_validation_assistant(prompt, max_tokens=300)
+                        try:
+                            translated_dict = json.loads(llm_answer)
+                            translated_msg[i] = translated_dict
+                        except:
+                            pass  # Keep original if translation fails
+                return translated_msg, "cost_and_package"
         else:
             if language == "English":
                 return step["other_text"], "invalid_feedback"

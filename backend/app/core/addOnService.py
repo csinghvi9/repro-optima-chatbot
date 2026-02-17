@@ -219,6 +219,17 @@ async def AddONServices(
             await thread.save()
 
         step_msg = list(step["message"])  # copy
+
+        # Translate static text messages for non-English languages
+        if language != "English":
+            for i, item in enumerate(step_msg):
+                if isinstance(item, str) and item.strip():
+                    translated = await ask_openai_validation_assistant(
+                        f"Translate this sentence to {language}, output only the translated sentence: '{item}' output-string", max_tokens=100
+                    )
+                    if isinstance(translated, str) and translated.strip().lower() != "none":
+                        step_msg[i] = translated
+
         if user and user.preffered__medical_test and user.preffered__medical_test not in [
             "None",
             "none",
@@ -458,6 +469,17 @@ async def AddONServices(
 
             # Build service response
             step_msg = list(step["message"])  # copy
+
+            # Translate static text messages for non-English languages
+            if language != "English":
+                for i, item in enumerate(step_msg):
+                    if isinstance(item, str) and item.strip():
+                        translated = await ask_openai_validation_assistant(
+                            f"Translate this sentence to {language}, output only the translated sentence: '{item}' output-string", max_tokens=100
+                        )
+                        if isinstance(translated, str) and translated.strip().lower() != "none":
+                            step_msg[i] = translated
+
             if user_info.preffered__medical_test and user_info.preffered__medical_test not in [
                 "None",
                 "none",

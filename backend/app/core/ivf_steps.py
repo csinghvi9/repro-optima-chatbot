@@ -214,6 +214,17 @@ async def ivfSteps(
 
             if language == "English":
                 return step["message"], "ivf_steps"
+            else:
+                # Translate string elements for non-English languages
+                translated_msg = list(step["message"])
+                for i, item in enumerate(translated_msg):
+                    if isinstance(item, str) and item.strip():
+                        translated = await ask_openai_validation_assistant(
+                            f"Translate this sentence to {language}, output only the translated sentence: '{item}' output-string", max_tokens=100
+                        )
+                        if isinstance(translated, str) and translated.strip().lower() != "none":
+                            translated_msg[i] = translated
+                return translated_msg, "ivf_steps"
         else:
             if language == "English":
                 return step["other_text"], "invalid_feedback"
