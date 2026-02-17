@@ -7,7 +7,6 @@ import logging
 from app.cruds.threads_cruds import update_thread_name, get_thread_by_name
 from app.core.websocket_init import WebSocketManager
 from app.core.appointmentflow import appointment_flow
-from app.core.ivf_calculation_flow import ivf_success_calculation_flow
 from app.core.end_flow import end_flow
 from app.core.flow_classifier import flow_check, new_language_change
 from fastapi import Query
@@ -16,7 +15,6 @@ import json
 from app.core.lifestyleandpreparations import lifestyleAndPreparations
 from bson import ObjectId
 from app.models.threads import Thread
-from app.core.loan_and_emi_options import loan_emi_option
 from app.core.emergencyContact import EmergencyContact
 from app.core.ivfSuccessRate import IVFSuccessRate
 from app.core.consent_flow import ConsentFlow
@@ -400,47 +398,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                         messages.append(
                             {"response": response, "contentType": contentType}
                         )
-                elif (
-                    data.get("subtype") == "ivf_success_calculator"
-                    or flow_id == "ivf_success_calculator"
-                ):
-                    response, contentType = await ivf_success_calculation_flow(
-                        language, thread_id
-                    )
-                    if contentType == "out_of_context":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": "out_of_context",
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": "out_of_context"}
-                        )
-                    else:
-                        message = response
-                        # # First message
-                        await websocket.send_text(
-                            json.dumps({"type": "message", "text": message[0]})
-                        )
-                        messages.append({"response": message[0], "contentType": None})
-                        # Second message
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": message[1],
-                                    "contentType": "ivf_calculate",
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": message[1], "contentType": "ivf_calculate"}
-                        )
-
                 elif (data.get("subtype") == "Lifestyle_and_Preparations") or (
                     flow_id == "Lifestyle_and_Preparations"
                 ):
@@ -496,43 +453,6 @@ async def websocket_chat(websocket: WebSocket, token: str = Query(...)):
                             )
                         )
                         messages.append({"response": response[2], "contentType": None})
-                elif (data.get("subtype") == "loan_and_emi") or (
-                    flow_id == "loan_and_emi"
-                ):
-                    response, contentType = await loan_emi_option(
-                        content, language, thread_id
-                    )
-                    if contentType == "out_of_context":
-                        await websocket.send_text(
-                            json.dumps(
-                                {
-                                    "type": "message",
-                                    "text": response,
-                                    "contentType": "out_of_context",
-                                }
-                            )
-                        )
-                        messages.append(
-                            {"response": response, "contentType": "out_of_context"}
-                        )
-                    else:
-                        for i in range(len(response)):
-                            if isinstance(response[i], dict):
-                                contentType = "loan_and_emi"
-                            else:
-                                contentType = None
-                            await websocket.send_text(
-                                json.dumps(
-                                    {
-                                        "type": "message",
-                                        "text": response[i],
-                                        "contentType": contentType,
-                                    }
-                                )
-                            )
-                            messages.append(
-                                {"response": response[i], "contentType": contentType}
-                            )
                 elif (data.get("subtype") == "emergency_contact") or (
                     flow_id == "emergency_contact"
                 ):

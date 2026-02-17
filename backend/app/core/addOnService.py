@@ -42,18 +42,33 @@ async def AddONServices(
             "2": {
                 "step_id": "2",
                 "message": [
-                    "Thank you for sharing your details",
-                    "To understand more about these, search for them in the query box below",
+                    "Thank you! Now please share your phone number so we can assist you better",
                 ],
                 "expected_input": "name of the person or nick name of the person and can be any name in any language like (miqat,ekal,ellis etc) and a valid name not like abc xyz",
                 "valid_condition": r"^[A-Za-z\s]{2,50}$",
                 "action": None,
-                "other_text": "Sorry, I couldn't recognize that as a name. Could you please re-enter your full name Let's try again",  # "Please share your name it is important for appointment booking step",
+                "other_text": "Sorry, I couldn't recognize that as a name. Could you please re-enter your full name Let's try again",
                 "final_text": [
                     "We cannot continue without your name. Please enter your name to proceed",
                     "You can still explore information without giving your name. Would you like to know about topics below",
                 ],
-                "next_step": None,
+                "next_step": "3",
+            },
+            "3": {
+                "step_id": "3",
+                "message": [
+                    "Thank you for sharing your details",
+                    "To understand more about these, search for them in the query box below",
+                ],
+                "expected_input": "phone number or mobile number of the user (7-15 digits, may start with + or 0)",
+                "valid_condition": r"^[\+]?[\d\-\s]{7,15}$",
+                "action": None,
+                "other_text": "Sorry, that doesn't look like a valid phone number. Please enter your phone number",
+                "final_text": [
+                    "We cannot continue without your phone number. Please enter your phone number to proceed",
+                    "You can still explore information without giving your phone number. Would you like to know about topics below",
+                ],
+                "next_step": "5",
             },
             "5": {
                 "step_id": "5",
@@ -92,15 +107,21 @@ async def AddONServices(
     thread_obj_id = ObjectId(thread_id)
     thread = await Thread.find_one(Thread.id == thread_obj_id)
     step_count = thread.step_count
+    print(f"[ADD_ON_SERVICE] Entry: flow_id={flow_id}, step_id={step_id}, thread.step_id={thread.step_id}, user_message={user_message[:50] if user_message else None}")
     if thread and thread.step_id and not (user_message):
+        print(f"[ADD_ON_SERVICE] Branch: thread.step_id exists, no user_message → step_check")
         user_message = await step_check(thread_id, services_flow, 8)
         new_thread = await Thread.find_one(Thread.id == thread_obj_id)
         step_id = new_thread.step_id
+        print(f"[ADD_ON_SERVICE] After step_check: step_id={step_id}, user_message={user_message[:50] if user_message else None}")
     elif thread and thread.step_id:
         step_id = thread.step_id
+        print(f"[ADD_ON_SERVICE] Branch: thread.step_id exists, has user_message → step_id={step_id}")
     elif not step_id:
+        print(f"[ADD_ON_SERVICE] Branch: no step_id → step_check for existing user")
         user_message = await step_check(thread_id, services_flow, 5)
         new_thread = await Thread.find_one(Thread.id == thread_obj_id)
+        print(f"[ADD_ON_SERVICE] After step_check(no_step): new_thread.step_id={new_thread.step_id}, user_message={user_message[:50] if user_message else None}")
         if new_thread.step_id:
             step_id = new_thread.step_id
             prompt = f"""
@@ -163,6 +184,7 @@ async def AddONServices(
             user_message = user_original_message
 
     step = services_flow["steps"].get(step_id)
+    print(f"[ADD_ON_SERVICE] Resolved: step_id={step_id}, step_exists={step is not None}")
     if not step:
         return {"error": "Invalid step"}
 
@@ -211,12 +233,21 @@ async def AddONServices(
                 step_msg.insert(1, llm_answer)
         else:
             services_list = list(allowed_add_on_services)
-            services_list.insert(
-                0,
-                "IVF offer a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:",
-            )
-            prompt = f"then return all the test and also  the heading specified in this list  {services_list} translate in this langauge-{language} and separate each test and heading with ending \n  output-string "
-            llm_answer = await ask_openai_validation_assistant(prompt)
+            heading = "Repro IVF offers a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:"
+            if language == "English":
+                # No LLM needed for English - use the list directly
+                services_answer = "\n".join(services_list)
+            else:
+                # Translate heading body (without brand name) and services list
+                heading_prompt = f"Translate this sentence to {language}, output only the translated sentence: 'offers a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:' output-string"
+                heading_body = await ask_openai_validation_assistant(heading_prompt, max_tokens=100)
+                if isinstance(heading_body, str) and heading_body.strip().lower() != "none":
+                    heading = f"Repro IVF {heading_body}"
+                prompt = f"Translate all the items in this list to {language} and separate each item with ending \n: {services_list} output-string"
+                services_answer = await ask_openai_validation_assistant(prompt, max_tokens=500)
+                if not isinstance(services_answer, str) or services_answer.strip().lower() == "none":
+                    services_answer = "\n".join(services_list)
+            llm_answer = heading + "\n" + services_answer
             if already_details_given:
                 step_msg.insert(0, llm_answer)
             else:
@@ -297,13 +328,11 @@ async def AddONServices(
     - Do NOT treat unrelated or invalid inputs as refusal.
     2. Regex + meaning validation:
     - If the input matches {step['valid_condition']} (regex + meaning check),
-        then → return status = "VALID" and bot_response = {step['message']} (translate everything into {language}).
-        and if there is a list of test then return all list along with header and
-        ***-bottom (separate strng in list at last) 'To understand more about these, search for them in the query box below' always translated into {language} it is very important
+        then → return status = "VALID" and bot_response = {step['message']} (translated into {language}).
     3. Otherwise:
     - If input is not refusal and does not match regex,
         then → return status = "INVALID" and bot_response = {step['other_text']} (translated into {language}).
-    4-***you have to just translate the string in the language given below do not add anything extra from your side
+    4-***you have to just translate the string in the language given below do not add anything extra from your side. Do NOT add any services list or test names - return ONLY the exact message specified above.
     - ** and also in same the format if it is string then string and if its is list of string then list of string
 
     Format:{{
@@ -382,6 +411,7 @@ async def AddONServices(
                 if not (is_validated):
                     return answer, "out_of_context"
     # Final decision
+    print(f"[ADD_ON_SERVICE] LLM result: step={step_id}, status={llm_json.get('status')}, bot_response={str(llm_json.get('bot_response'))[:200]}")
     if llm_json.get("status") == "INVALID":
         if thread and step["step_id"] == "1":
             thread.flow_id = None
@@ -407,10 +437,14 @@ async def AddONServices(
         if step["step_id"] == "2":
             user_info = await User_Info.find_one(User_Info.thread_id == thread_id)
             user_info.name = user_message
+            await user_info.save()
+        if step["step_id"] == "3":
+            user_info = await User_Info.find_one(User_Info.thread_id == thread_id)
+            user_info.phone_number = user_message
             user_info.preffered_center = [CLINIC_CENTER]
             await user_info.save()
 
-            # Directly show services (skip pincode step)
+            # Directly show services
             if thread:
                 thread.flow_id = flow_id
                 thread.step_id = None
@@ -432,18 +466,24 @@ async def AddONServices(
                 step_msg.insert(1, llm_answer)
             else:
                 services_list = list(allowed_add_on_services)
-                services_list.insert(
-                    0,
-                    "IVF offer a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:",
-                )
-                prompt = f"then return all the test and also  the heading specified in this list  {services_list} translate in this langauge-{language} and separate each test and heading with ending \n  output-string "
-                llm_answer = await ask_openai_validation_assistant(prompt)
+                heading = "Repro IVF offers a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:"
+                if language == "English":
+                    # No LLM needed for English - use the list directly
+                    services_answer = "\n".join(services_list)
+                else:
+                    # Translate heading body (without brand name) and services list
+                    heading_prompt = f"Translate this sentence to {language}, output only the translated sentence: 'offers a variety of services and advanced tests to support fertility, pregnancy, and reproductive health. Here are some of the key ones:' output-string"
+                    heading_body = await ask_openai_validation_assistant(heading_prompt, max_tokens=100)
+                    if isinstance(heading_body, str) and heading_body.strip().lower() != "none":
+                        heading = f"Repro IVF {heading_body}"
+                    prompt = f"Translate all the items in this list to {language} and separate each item with ending \n: {services_list} output-string"
+                    services_answer = await ask_openai_validation_assistant(prompt, max_tokens=500)
+                    if not isinstance(services_answer, str) or services_answer.strip().lower() == "none":
+                        services_answer = "\n".join(services_list)
+                llm_answer = heading + "\n" + services_answer
                 step_msg.insert(1, llm_answer)
 
-            if language == "English":
-                return step_msg, "add_on_service"
-            else:
-                return step_msg, "add_on_service"
+            return step_msg, "add_on_service"
 
         # Save thread
         if thread:
@@ -454,6 +494,7 @@ async def AddONServices(
             thread.previous_step = step["step_id"]
             await thread.save()
 
+        print(f"[ADD_ON_SERVICE] Returning: step={step_id}, next_step={next_step}, response={str(llm_json.get('bot_response'))[:200]}")
         return llm_json.get("bot_response"), None
     else:
         # stay on same step
@@ -465,7 +506,7 @@ async def AddONServices(
             thread.previous_flow = thread.flow_id
             thread.previous_step = step["step_id"]
             await thread.save()
-        if step["step_id"] in ["2", "5"] and isinstance(
+        if step["step_id"] in ["2", "3", "5"] and isinstance(
             llm_json.get("bot_response"), list
         ):
             return llm_json.get("bot_response"), "invalid_feedback"

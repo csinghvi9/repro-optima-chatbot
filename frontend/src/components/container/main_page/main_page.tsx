@@ -52,11 +52,18 @@ const ChatbotWidget: React.FC = () => {
   const [newThreadID, setThreadID] = useState<string | undefined>(undefined);
   const { createNewThread } = useThreads();
 
-  const toggleChatbot = () => {
+  const toggleChatbot = async () => {
     if (isChatbotOpen) {
       setIsChatbotOpen(false);
       window.parent.postMessage({ type: "CHATBOT_CLOSE" }, "*");
     } else {
+      // Create a new thread every time the bot is opened
+      try {
+        const newThread = await createNewThread("English");
+        setThreadID(newThread._id);
+      } catch (err) {
+        console.error("Failed to create new thread on open:", err);
+      }
       setIsChatbotOpen(true);
       window.parent.postMessage({ type: "CHATBOT_OPEN" }, "*");
     }

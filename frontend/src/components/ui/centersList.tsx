@@ -176,8 +176,7 @@ const CentersList: React.FC<CentersListProps> = ({
       </ul>
 
       <p className="text-xs text-indira_text mt-2">
-        Click on the clinic name to proceed, or use the map icon to view the
-        location on Google Maps.
+        Use the map icon to view the location on Google Maps.
       </p>
 
     </div>

@@ -6,7 +6,6 @@ import AppointmentBookedMessage from "@/components/ui/appointmentBooked";
 import LifestyleAndPreparationsProps from "@/components/ui/lifestyleAndPreparations";
 import BookAppointmentMessageBox from "@/components/ui/book_appointment_button";
 import EmergencyMessageBox from "@/components/ui/emergencyContact";
-import LoanAndEMIBox from "@/components/ui/loanAndEMI";
 import SuccessRateMessage from "@/components/ui/successRate";
 import IVFStepsBox from "@/components/ui/ivfSteps";
 import CostAndPackageBox from "@/components/ui/costAndPackage";
@@ -146,10 +145,6 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
                           ) : msg.contentType ===
                             "Lifestyle_and_Preparations" ? (
                             <LifestyleAndPreparationsProps msg={msg.content} />
-                          ) : msg.contentType === "ivf_calculate" ? (
-                            <div className="bg-white text-indira_text px-3 py-2 rounded-tl-[10px] rounded-tr-[10px] rounded-br-[10px] rounded-bl-[4px] text-xs max-w-[75%] whitespace-pre-line">
-                              {msg.content}
-                            </div>
                           ) : msg.contentType === "book_appointment" ? (
                             <BookAppointmentMessageBox
                               msg={msg.content}
@@ -159,12 +154,7 @@ export default function BOTUI({ setBotUI, thread }: ChatbotProps) {
                           ) : // : msg.contentType === "booked" ? (
                           //   <AppointmentBookedMessage msg={msg} />
                           // )
-                          msg.contentType === "loan_and_emi" ? (
-                            <LoanAndEMIBox
-                              msg={msg.content?.content}
-                              newThreadID={newThreadID}
-                            />
-                          ) : msg.contentType === "ivf_steps" ? (
+                          msg.contentType === "ivf_steps" ? (
                             <IVFStepsBox msg={msg.content} />
                           ) : msg.contentType === "feedback" ? (
                             <FeedbackBox

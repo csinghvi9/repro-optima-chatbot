@@ -14,10 +14,14 @@ async def step_check(thread_id, flow, total_step):
                 thread.step_id = flow["steps"]["1"]["next_step"]
                 await thread.save()
                 user_message = user.name
-            elif str(i) == "2" and user.name and user.pincode:
+            elif str(i) == "2" and user.name and user.phone_number:
                 thread.step_id = flow["steps"]["2"]["next_step"]
                 await thread.save()
-                user_message = str(user.pincode)
+                user_message = user.phone_number
+            elif str(i) == "3" and user.phone_number and "3" in flow["steps"]:
+                thread.step_id = flow["steps"]["3"]["next_step"]
+                await thread.save()
+                user_message = user.phone_number
             elif (
                 str(i) == "5" and user.pincode and user.name
             ):  # and user.preffered_center

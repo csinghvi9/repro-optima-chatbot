@@ -5,7 +5,6 @@ from app.routes import (
     message_route,
     assistant_route,
     userInfoRoute,
-    loan_route,
     admin_user_route,
 )
 
@@ -20,7 +19,6 @@ router.include_router(assistant_route.router, prefix="/assistant", tags=["Assist
 router.include_router(
     userInfoRoute.router, prefix="/user_info", tags=["User Information"]
 )
-router.include_router(loan_route.router, prefix="/loan_user", tags=["Loan User"])
 router.include_router(
     admin_user_route.router, prefix="/admin_auth", tags=["Admin Auth"]
 )

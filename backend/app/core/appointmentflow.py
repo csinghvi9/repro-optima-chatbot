@@ -31,11 +31,7 @@ async def appointment_flow(
             "2": {
                 "step_id": "2",
                 "message": [
-                    {
-                        "first_text": "Thank you for your query.",
-                        "second_text": "Our representative will call you shortly",
-                        "third_text": "For any query you can call us on +6332-256-2433",
-                    }
+                    "Thank you! Now please share your phone number so we can assist you better",
                 ],
                 "expected_input": "name of the person or nick name of the person and can be any name in any language like (miqat,ekal,ellis etc) and a valid name not like abc xyz",
                 "valid_condition": r"^[A-Za-z\s]{2,50}$",
@@ -44,6 +40,25 @@ async def appointment_flow(
                 "final_text": [
                     "We cannot continue with the booking without your name. Please enter your name to proceed",
                     "You can still explore information without giving your name. Would you like to know about topics below",
+                ],
+                "next_step": "3",
+            },
+            "3": {
+                "step_id": "3",
+                "message": [
+                    {
+                        "first_text": "Thank you for your query.",
+                        "second_text": "Our representative will call you shortly",
+                        "third_text": "For any query you can call us on +6332-256-2433",
+                    }
+                ],
+                "expected_input": "phone number or mobile number of the user (7-15 digits, may start with + or 0)",
+                "valid_condition": r"^[\+]?[\d\-\s]{7,15}$",
+                "action": None,
+                "other_text": "Sorry, that doesn't look like a valid phone number. Please enter your phone number",
+                "final_text": [
+                    "We cannot continue with the booking without your phone number. Please enter your phone number to proceed",
+                    "You can still explore information without giving your phone number. Would you like to know about topics below",
                 ],
                 "next_step": "6",
             },
@@ -119,6 +134,36 @@ async def appointment_flow(
         new_thread = await Thread.find_one(Thread.id == thread_obj_id)
         if new_thread.step_id:
             step_id = new_thread.step_id
+            # If step_check skipped all data steps (name+phone already collected),
+            # book the appointment directly instead of going to cancel/reschedule step
+            if step_id == "6":
+                user = await User_Info.find_one(User_Info.thread_id == thread_id)
+                if user and user.name and user.phone_number:
+                    clinic_data = [CLINIC_CENTER]
+                    user.preffered_center = clinic_data
+                    user.appointment_status = AppointmentStatus.BOOKED
+                    await user.save()
+                    if thread:
+                        thread.flow_id = flow_id
+                        thread.step_id = "6"
+                        thread.step_count = 1
+                        thread.previous_flow = thread.flow_id
+                        thread.previous_step = "3"
+                        await thread.save()
+                    booked_step = appointmentflow["steps"]["3"]
+                    if language == "English":
+                        return [clinic_data, booked_step["message"]], "booked_with_centers"
+                    else:
+                        prompt = f"Translate the following into {language}. Return as valid JSON in the same structure. Only translate string values, not keys or numbers.\n{booked_step['message']}\nOutput: valid JSON list"
+                        llm_answer = await ask_openai_validation_assistant(prompt)
+                        try:
+                            llm_translated = json.loads(llm_answer)
+                        except:
+                            try:
+                                llm_translated = ast.literal_eval(llm_answer)
+                            except:
+                                llm_translated = booked_step["message"]
+                        return [clinic_data, llm_translated], "booked_with_centers"
         else:
             step_id = "1"
             user_message = "I want to Book an Appointment"
@@ -290,22 +335,27 @@ Rules:
     if llm_json.get("status") == "VALID":
         next_step = step["next_step"]
         if step["step_id"] == "2":
-            # Save name, set hardcoded clinic, and mark as BOOKED directly
+            # Save name only - phone number collected in step 3
             user = await User_Info.find_one(User_Info.thread_id == thread_id)
-            clinic_data = [CLINIC_CENTER]
             if user:
                 user.name = user_message
-                user.preffered_center = clinic_data
-                user.appointment_status = AppointmentStatus.BOOKED
                 await user.save()
             else:
                 user_info = User_Info(
                     name=user_message,
                     thread_id=thread_id,
-                    preffered_center=clinic_data,
-                    appointment_status=AppointmentStatus.BOOKED,
                 )
                 await user_info.insert()
+
+        if step["step_id"] == "3":
+            # Save phone number, set hardcoded clinic, and mark as BOOKED
+            user = await User_Info.find_one(User_Info.thread_id == thread_id)
+            clinic_data = [CLINIC_CENTER]
+            if user:
+                user.phone_number = user_message
+                user.preffered_center = clinic_data
+                user.appointment_status = AppointmentStatus.BOOKED
+                await user.save()
 
             # Save thread state
             if thread:
@@ -359,7 +409,7 @@ Rules:
             thread.previous_flow = thread.flow_id
             thread.previous_step = step["step_id"]
             await thread.save()
-        if step["step_id"] in ["2", "5"] and isinstance(
+        if step["step_id"] in ["2", "3", "5"] and isinstance(
             llm_json.get("bot_response"), list
         ):
             return llm_json.get("bot_response"), "invalid_feedback"

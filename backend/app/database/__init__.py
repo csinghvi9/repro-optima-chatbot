@@ -12,7 +12,6 @@ from app.models.message import Message
 from app.models.user_info import User_Info
 from app.models.ivf_centers import IVF_Center
 from app.models.otp_verification import OtpVerification
-from app.models.loan_model import Loan_User
 
 # Global DB client and instance
 db_client: AsyncIOMotorClient = None
@@ -52,8 +51,7 @@ async def init_db():
                 Message,
                 User_Info,
                 IVF_Center,
-                OtpVerification,
-                Loan_User
+                OtpVerification
             ]
         )
 

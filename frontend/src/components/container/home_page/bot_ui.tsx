@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, ReactNode } from "react";
 import BookFreeConsultation from "@/components/container/bookFreeConsultation/bookFreeConsultation";
-import IVFSuccessCalculator from "@/components/container/ivfSuccessCalculator/ivfSuccessCalculator";
 import { useWebSocket } from "@/app/WebSocketContext";
 import BotStructureNew from "@/components/container/botStructure/boxStructureNew";
 import LanguageSelection from "@/components/ui/languageSelection";
@@ -15,7 +14,6 @@ import AppointmentBookedMessage from "@/components/ui/appointmentBooked";
 import LifestyleAndPreparationsProps from "@/components/ui/lifestyleAndPreparations";
 import BookAppointmentMessageBox from "@/components/ui/book_appointment_button";
 import EmergencyMessageBox from "@/components/ui/emergencyContact";
-import LoanAndEMIBox from "@/components/ui/loanAndEMI";
 import SuccessRateMessage from "@/components/ui/successRate";
 import SuccessRate from "@/components/container/successRateOption/successRateOption";
 import IVFStepsBox from "@/components/ui/ivfSteps";
@@ -25,7 +23,6 @@ import { translations } from "@/components/constants/translations";
 import { options } from "@/components/constants/options";
 import { botMessages } from "@/components/constants/botMessage";
 import UnderstandingIVF from "@/components/container/UnderstandIVF/UnderstandingIVF";
-import EMIFacilities from "@/components/container/emiFacilities/emiFacilities";
 import IVFQuestionBox from "@/components/ui/ivfQuestion";
 import AddOnServiceBox from "@/components/ui/addServiceBox";
 import FeedbackBox from "@/components/ui/feedbackBox";
@@ -96,11 +93,8 @@ export default function Chatbot({
   );
   const baseComponentMap = {
     book_consultation: BookFreeConsultation,
-    success_calculator: IVFSuccessCalculator,
     find_hospital: FindHospital,
     frequently_asked_questions: FrequentlyAskedQuestion,
-    // emotional_support: EmotionalSupport,
-    emi_facilities: EMIFacilities,
     success_rate: SuccessRate,
     packages: IVFCostAndPackage,
     services_offered: ServicesOffered,
@@ -321,10 +315,6 @@ export default function Chatbot({
                         </div>
                       ) : msg.contentType === "Lifestyle_and_Preparations" ? (
                         <LifestyleAndPreparationsProps msg={msg.content} />
-                      ) : msg.contentType === "ivf_calculate" ? (
-                        <div className="bg-white text-indira_text px-3 py-2 rounded-tl-[10px] rounded-tr-[10px] rounded-br-[10px] rounded-bl-[4px] text-xs max-w-[75%] whitespace-pre-line">
-                          {msg.content}
-                        </div>
                       ) : msg.contentType === "book_appointment" ? (
                         <BookAppointmentMessageBox
                           msg={msg.content}
@@ -339,12 +329,7 @@ export default function Chatbot({
                       ) : // : msg.contentType === "booked" ? (
                       //   <AppointmentBookedMessage msg={msg} />
                       // )
-                      msg.contentType === "loan_and_emi" ? (
-                        <LoanAndEMIBox
-                          msg={msg.content?.content}
-                          newThreadID={newThreadID}
-                        />
-                      ) : msg.contentType === "ivf_steps" ? (
+                      msg.contentType === "ivf_steps" ? (
                         <IVFStepsBox msg={msg.content} />
                       ) : msg.contentType === "feedback" ? (
                         <FeedbackBox

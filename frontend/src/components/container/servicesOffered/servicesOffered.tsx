@@ -31,9 +31,9 @@ const ServicesOffered: React.FC<ServicesOfferedProps> = ({
     const hasSentInitial = useRef(false);
 
     const messagesByLanguage: Record<string, string> = {
-        English: "What services does IVF offer ?",
-        Русский: "Какие услуги предлагает клиника ЭКО?",
-        Filipino: "Anong mga serbisyo ang inaalok ng IVF?",
+        English: "What services does Repro offer ?",
+        Русский: "Какие услуги предлагает клиника Репро?",
+        Filipino: "Anong mga serbisyo ang inaalok ng Repro?",
     };
 
 
