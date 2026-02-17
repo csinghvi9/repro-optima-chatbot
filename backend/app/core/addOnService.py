@@ -243,10 +243,13 @@ async def AddONServices(
                 heading_body = await ask_openai_validation_assistant(heading_prompt, max_tokens=100)
                 if isinstance(heading_body, str) and heading_body.strip().lower() != "none":
                     heading = f"Repro IVF {heading_body}"
-                prompt = f"Translate all the items in this list to {language} and separate each item with ending \n: {services_list} output-string"
+                prompt = f"Translate each item in this list to {language}. Put each item on a NEW LINE. Do NOT join them with semicolons. Each numbered item must start on its own line:\n{chr(10).join(services_list)}\nOutput: translated items, one per line"
                 services_answer = await ask_openai_validation_assistant(prompt, max_tokens=500)
                 if not isinstance(services_answer, str) or services_answer.strip().lower() == "none":
                     services_answer = "\n".join(services_list)
+                else:
+                    # Ensure proper newlines - replace semicolons with newlines if LLM used them
+                    services_answer = services_answer.replace("; ", "\n").replace(";", "\n")
             llm_answer = heading + "\n" + services_answer
             if already_details_given:
                 step_msg.insert(0, llm_answer)
@@ -476,10 +479,12 @@ async def AddONServices(
                     heading_body = await ask_openai_validation_assistant(heading_prompt, max_tokens=100)
                     if isinstance(heading_body, str) and heading_body.strip().lower() != "none":
                         heading = f"Repro IVF {heading_body}"
-                    prompt = f"Translate all the items in this list to {language} and separate each item with ending \n: {services_list} output-string"
+                    prompt = f"Translate each item in this list to {language}. Put each item on a NEW LINE. Do NOT join them with semicolons. Each numbered item must start on its own line:\n{chr(10).join(services_list)}\nOutput: translated items, one per line"
                     services_answer = await ask_openai_validation_assistant(prompt, max_tokens=500)
                     if not isinstance(services_answer, str) or services_answer.strip().lower() == "none":
                         services_answer = "\n".join(services_list)
+                    else:
+                        services_answer = services_answer.replace("; ", "\n").replace(";", "\n")
                 llm_answer = heading + "\n" + services_answer
                 step_msg.insert(1, llm_answer)
 
